@@ -1,0 +1,80 @@
+---
+interface Props {
+  proPrice?: string;  // Default: "[PRICE]"
+}
+
+interface PricingCta {
+  label: string;
+  href: string;
+}
+
+interface PricingTier {
+  name: string;
+  price: string;
+  features: string[];
+  cta: PricingCta;
+}
+
+const { proPrice = "[PRICE]" } = Astro.props;
+
+const tiers: PricingTier[] = [
+  {
+    name: "Free",
+    price: "Free",
+    features: [
+      "Local Git repositories",
+      "Public GitHub repositories",
+      "Markdown report generation"
+    ],
+    cta: { label: "Install Free", href: "/docs/install" }
+  },
+  {
+    name: "Pro",
+    price: proPrice,
+    features: [
+      "Jira, Linear, GH Enterprise, GitLab fetchers",
+      "HTML & LaTeX export formats",
+      "dcv query — Interactive RAG",
+      "All minor updates & patches for v1.x.x"
+    ],
+    cta: { label: "Buy Pro", href: "#" }
+  }
+];
+---
+
+<section aria-label="Pricing" class="py-16 px-6">
+  <h2 class="text-2xl font-semibold text-slate-100 text-center mb-10">Simple, Transparent Pricing</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+    {tiers.map((tier) => (
+      <div class={`rounded-lg p-8 min-w-0 overflow-hidden flex flex-col ${tier.name === "Pro" ? "bg-slate-800 border border-dcv-accent/50" : "bg-slate-800 border border-slate-700"}`}>
+        <h3 class="text-xl font-bold text-slate-100 mb-2">{tier.name}</h3>
+        <p class="text-3xl font-bold text-dcv-accent mb-6">{tier.price}</p>
+        <ul class="space-y-2 mb-6 flex-1">
+          {tier.features.map((feature) => (
+            <li class="flex items-start gap-2 text-slate-300 text-sm">
+              <span class="text-dcv-accent mt-0.5 shrink-0" aria-hidden="true">✓</span>
+              {feature}
+            </li>
+          ))}
+        </ul>
+        {tier.name === "Pro" && (
+          <p class="text-xs text-slate-400 mb-6 border-t border-slate-700 pt-4">
+            Perpetual License for v1.x.x — includes all minor updates and patches.
+          </p>
+        )}
+        {tier.name === "Free" ? (
+          <a href={tier.cta.href} class="text-center text-dcv-accent underline underline-offset-4 text-sm hover:text-cyan-300 transition-colors">
+            {tier.cta.label}
+          </a>
+        ) : (
+          <>
+            <!-- TODO: replace href="#" with checkout URL when payment is configured -->
+            <a href={tier.cta.href} class="block text-center bg-dcv-accent text-dcv-bg font-semibold py-3 px-6 rounded-md hover:bg-cyan-300 transition-colors">
+              {tier.cta.label}
+            </a>
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
