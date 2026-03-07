@@ -87,7 +87,7 @@
 ### Step 3g — IAM OIDC (can run parallel with 3a–3f)
 
 - [ ] T017 [P] [AWS] Register `token.actions.githubusercontent.com` as an OpenID Connect Identity Provider in AWS IAM (one-time per account): Provider URL = `https://token.actions.githubusercontent.com`, Audience = `sts.amazonaws.com` → `plan.md §Phase 2 Step 2g`, `research.md §Decision 4`
-- [ ] T018 [AWS] Create IAM OIDC Deploy Role: trust policy scoped to `repo:gcoonrod/dcv-web:ref:refs/heads/main`; attach inline policy granting `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` on website bucket ARN and `cloudfront:CreateInvalidation` on distribution ARN only; verify binary bucket and `s3:DeleteBucket` are NOT granted → `plan.md §Phase 2 Step 2h`, `data-model.md §IAM Role (OIDC Deploy Role)`, `research.md §Decision 4`
+- [ ] T018 [AWS] Create IAM OIDC Deploy Role: trust policy scoped to `repo:gcoonrod/dcv-web:ref:refs/heads/main`; attach inline policy granting `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` on website bucket ARN and `cloudfront:CreateInvalidation` on distribution ARN only; verify binary bucket and `s3:DeleteBucket` are NOT granted → `plan.md §Phase 2 Step 2h`, `data-model.md §IAM Role (OIDC Deploy Role)`, `research.md §Decision 4`
 
 **Checkpoint**: AWS infrastructure complete. Website bucket, binary bucket, OACs, behaviors, CF Function, and IAM role all provisioned. Record: `WEB_BUCKET` name, `DISTRIBUTION_ID`, `AWS_ROLE_ARN` — needed for Phase 4.
 

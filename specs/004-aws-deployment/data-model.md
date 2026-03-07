@@ -81,7 +81,7 @@ The single CDN endpoint for `apps.microcode.io`. Routes requests to origins via 
 | 2 | `/dcv/*` | Website Bucket (OAC) | 24h + invalidation on deploy | Viewer-request: index resolver |
 | Default (`*`) | All other paths | (pre-existing, out of scope) | (pre-existing) | (pre-existing) |
 
-**Behavior ordering is critical**: `/dcv/releases/*` must have higher numeric priority than `/dcv/*`. CloudFront evaluates behaviors most-specific-first; if ordering were reversed, binary requests would be incorrectly routed to the website bucket.
+**Behavior ordering is critical**: `/dcv/releases/*` must have a lower numeric priority (evaluated earlier) than `/dcv/*`. CloudFront matches the first behavior in priority order whose path pattern applies; if ordering were reversed, binary requests would be incorrectly routed to the website bucket.
 
 ---
 
@@ -158,7 +158,7 @@ The cloud identity assumed by the GitHub Actions CI pipeline during deployment.
 |----------|-------|
 | Trust principal | `token.actions.githubusercontent.com` (GitHub OIDC) |
 | Condition | `sub` = `repo:gcoonrod/dcv-web:ref:refs/heads/main` (main branch only) |
-| Permissions | `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` on `WEB_BUCKET`; `cloudfront:CreateInvalidation` on distribution ARN |
+| Permissions | `s3:PutObject`, `s3:GetObject`, `s3:DeleteObject`, `s3:ListBucket` on `WEB_BUCKET`; `cloudfront:CreateInvalidation` on distribution ARN |
 | Permissions (NOT granted) | No access to binary bucket; no `s3:DeleteBucket`; no IAM write |
 | Credential lifetime | 15 minutes (STS default); refreshed per workflow run |
 

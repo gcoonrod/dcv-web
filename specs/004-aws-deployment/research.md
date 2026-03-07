@@ -132,7 +132,7 @@ function handler(event) {
   }
 }
 ```
-- IAM Policy attached to the role: `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` on `WEB_BUCKET`; `cloudfront:CreateInvalidation` on the specific distribution ARN.
+- IAM Policy attached to the role: `s3:PutObject`, `s3:GetObject`, `s3:DeleteObject`, `s3:ListBucket` on `WEB_BUCKET`; `cloudfront:CreateInvalidation` on the specific distribution ARN.
 
 **GitHub Actions workflow permissions required**:
 ```yaml

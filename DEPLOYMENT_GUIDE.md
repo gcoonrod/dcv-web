@@ -114,37 +114,39 @@ Record the **OAC ID**.
 
 ---
 
-## Step 7 — Create the CloudFront Distribution
+## Step 7 — Configure the CloudFront Distribution
 
-You will configure the distribution with the website bucket as the initial origin. The binary bucket is added as a second origin in Step 9.
+> **If a distribution for `apps.microcode.io` already exists**: skip sub-steps 7a–7c entirely. Do **not** create a second distribution and do **not** modify the existing default behavior (doing so risks breaking other apps on the shared distribution). Go directly to **Step 7d** to record the existing distribution's details, then continue to Step 8.
 
-### 7a. Configure the origin
+You will add the website bucket as an origin to the distribution. The binary bucket is added as a second origin in Step 9. Sub-steps 7a–7c apply only when creating a brand-new distribution.
+
+### 7a. Configure the origin (new distribution only)
 
 1. Open **CloudFront** → **Create a CloudFront distribution**
-2. Under **Origin domain**, select the website S3 bucket from the dropdown (shown as `<bucket>.s3.<region>.amazonaws.com`)
-3. Under **Origin access**, select **Origin access control settings (recommended)**
-4. Under **Origin access control**, select `dcv-website-oac`
-5. Leave **Origin path** empty (CI syncs files to the bucket root)
+1. Under **Origin domain**, select the website S3 bucket from the dropdown (shown as `<bucket>.s3.<region>.amazonaws.com`)
+1. Under **Origin access**, select **Origin access control settings (recommended)**
+1. Under **Origin access control**, select `dcv-website-oac`
+1. Leave **Origin path** empty (CI syncs files to the bucket root)
 
-### 7b. Configure the default cache behavior
+### 7b. Configure the default cache behavior (new distribution only)
 
 1. Under **Viewer protocol policy**, select **Redirect HTTP to HTTPS**
-2. Under **Allowed HTTP methods**, select **GET, HEAD**
-3. Under **Cache key and origin requests**, select **Cache policy and origin request policy**
-4. Under **Cache policy**, select **CachingDisabled** — the default behavior is a catch-all; the /dcv/* behaviors created later handle real caching
+1. Under **Allowed HTTP methods**, select **GET, HEAD**
+1. Under **Cache key and origin requests**, select **Cache policy and origin request policy**
+1. Under **Cache policy**, select **CachingDisabled** — the default behavior is a catch-all; the /dcv/* behaviors created later handle real caching
 
-### 7c. Configure distribution settings
+### 7c. Configure distribution settings (new distribution only)
 
 1. Under **Price class**, select your preferred option (e.g., **Use only North America and Europe** to reduce costs, or **Use all edge locations** for global performance)
-2. Under **Alternate domain name (CNAME)**, click **Add item** and enter `apps.microcode.io`
-3. Under **Custom SSL certificate**, select the certificate you requested in Step 1 (must show **Issued**)
-4. Leave **Default root object** empty — the CloudFront Function handles root resolution
-5. Under **IPv6**, leave **Enabled**
-6. Click **Create distribution**
+1. Under **Alternate domain name (CNAME)**, click **Add item** and enter `apps.microcode.io`
+1. Under **Custom SSL certificate**, select the certificate you requested in Step 1 (must show **Issued**)
+1. Leave **Default root object** empty — the CloudFront Function handles root resolution
+1. Under **IPv6**, leave **Enabled**
+1. Click **Create distribution**
 
 ### 7d. Record the distribution details
 
-After creation, open the distribution and record:
+Open the distribution (existing or newly created) and record:
 
 - **Distribution ID** (e.g., `E1ABCDEF2GHIJK`) — used in bucket policies and GitHub secrets
 - **Distribution domain name** (e.g., `d1234567890abcde.cloudfront.net`) — used for DNS in Step 13

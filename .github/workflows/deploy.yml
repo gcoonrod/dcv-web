@@ -8,6 +8,10 @@ permissions:
   id-token: write   # Required for OIDC token request
   contents: read    # Required for checkout
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

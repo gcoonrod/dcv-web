@@ -66,7 +66,7 @@ Behaviors are evaluated in **priority order** (lower number = evaluated first). 
 | `/dcv/docs/quickstart` | `/docs/quickstart.html` | `docs/quickstart.html` | `200 OK`, HTML |
 | `/dcv/_astro/main.css` | `/_astro/main.css` | `_astro/main.css` | `200 OK`, CSS |
 | `/dcv/favicon.svg` | `/favicon.svg` | `favicon.svg` | `200 OK`, SVG |
-| `/dcv/nonexistent` | `/nonexistent.html` | (missing) | `403 AccessDenied` (S3) |
+| `/dcv/nonexistent` | `/nonexistent.html` | (missing) | `404 NoSuchKey` (from S3 via CloudFront; `403 AccessDenied` indicates misconfiguration) |
 
 **Cache invalidation**: On every deployment, the pipeline issues:
 ```
@@ -94,7 +94,7 @@ This invalidation MUST cover only the `/dcv/*` prefix and MUST NOT include `/dcv
 |----------|-----------------|-------|
 | Valid page request (`/dcv/`) | `200 OK` | Served by website bucket via CF Function |
 | Valid binary request | `200 OK` | Served by binary bucket |
-| Missing binary version | `403` or `404` | S3 returns `AccessDenied` (403) for missing keys with block-public-access enabled |
+| Missing binary version | `404 Not Found` (expected) or `403 AccessDenied` (misconfiguration) | S3 normally returns `404 NoSuchKey` for missing keys; a `403 AccessDenied` indicates an OAC/bucket policy issue and MUST be investigated |
 | Direct S3 URL request (bypassing CDN) | `403 AccessDenied` | OAC bucket policy blocks all non-CF requests |
 | HTTP request to any `/dcv/*` path | `301 Moved Permanently` | CloudFront HTTPS redirect policy |
 
