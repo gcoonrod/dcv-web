@@ -21,7 +21,7 @@ A Markdown file stored in `src/content/docs/`. Validated at build time by the Zo
 | Field | Source | Description |
 |---|---|---|
 | `id` | Filename without extension | Used as the URL slug (e.g., `installation.md` → id `installation` → route `/docs/installation`) |
-| `body` | Markdown body | Raw Markdown content rendered to HTML via `entry.render()` |
+| `body` | Markdown body | Raw Markdown content rendered to HTML via `render(entry)` from `astro:content` |
 
 ### Phase 3 Required Instances
 

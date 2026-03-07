@@ -19,7 +19,7 @@ const docs = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    order: z.number(),
+    order: z.number().int().min(1),
   }),
 });
 
@@ -165,7 +165,7 @@ The dynamic route page that generates one static HTML file per doc entry.
 
 ```astro
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 export async function getStaticPaths() {
@@ -178,7 +178,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { slug } = Astro.params;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
 
 <DocsLayout

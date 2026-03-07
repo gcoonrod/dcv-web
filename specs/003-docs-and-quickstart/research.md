@@ -6,7 +6,7 @@
 
 ## Decision 1: @tailwindcss/typography with Tailwind v4
 
-**Decision**: Install `@tailwindcss/typography` as a dev dependency and register it using the `@plugin "@tailwindcss/typography"` directive in `src/styles/global.css`.
+**Decision**: Install `@tailwindcss/typography` as a regular dependency (under `dependencies` in `package.json`, matching `tailwindcss`/`@tailwindcss/vite`) and register it using the `@plugin "@tailwindcss/typography"` directive in `src/styles/global.css`.
 
 **Rationale**: Tailwind CSS v4 eliminated `tailwind.config.js` in favor of CSS-based configuration. Plugins are now registered with `@plugin "..."` in the CSS entry point — not in a JS config file. The `@tailwindcss/typography` package supports v4 via this mechanism starting at v0.5.15. This approach aligns with the project's existing `@tailwindcss/vite` setup and Rule I (no custom CSS except keyframe animations).
 
@@ -44,7 +44,7 @@ const docs = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    order: z.number(),
+    order: z.number().int().min(1),
   }),
 });
 
