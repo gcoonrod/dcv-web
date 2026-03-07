@@ -79,9 +79,12 @@ The single CDN endpoint for `apps.microcode.io`. Routes requests to origins via 
 |----------|-------------|--------|--------------|---------------------|
 | 1 (highest) | `/dcv/releases/*` | Binary Bucket (OAC) | 1-year immutable | None |
 | 2 | `/dcv/*` | Website Bucket (OAC) | 24h + invalidation on deploy | Viewer-request: index resolver |
+| 3 | `/dcv` (exact) | Website Bucket (OAC) | 24h + invalidation on deploy | Viewer-request: index resolver |
 | Default (`*`) | All other paths | (pre-existing, out of scope) | (pre-existing) | (pre-existing) |
 
 **Behavior ordering is critical**: `/dcv/releases/*` must have a lower numeric priority (evaluated earlier) than `/dcv/*`. CloudFront matches the first behavior in priority order whose path pattern applies; if ordering were reversed, binary requests would be incorrectly routed to the website bucket.
+
+**Why the `/dcv` exact behavior is required**: CloudFront path pattern `/dcv/*` does not match the bare path `/dcv` (no trailing slash). Without a dedicated Priority 3 behavior, a GET request to `https://apps.microcode.io/dcv` falls through to the default behavior, which may return an error or route to a different application. The index resolver CloudFront Function handles the rewrite: `/dcv` → `/index.html`.
 
 ---
 
@@ -114,8 +117,8 @@ A lightweight viewer-request function attached to the `/dcv/*` behavior only.
 
 | Incoming URI | Transformed URI | S3 Object Fetched |
 |---|---|---|
-| `/dcv` | `/index.html` | `index.html` |
-| `/dcv/` | `/index.html` | `index.html` |
+| `/dcv` | `/index.html` | `index.html` | (matched by `/dcv` exact behavior, Priority 3 — not by `/dcv/*`) |
+| `/dcv/` | `/index.html` | `index.html` | |
 | `/dcv/docs/quickstart` | `/docs/quickstart.html` | `docs/quickstart.html` |
 | `/dcv/_astro/main.css` | `/_astro/main.css` | `_astro/main.css` |
 | `/dcv/favicon.svg` | `/favicon.svg` | `favicon.svg` |

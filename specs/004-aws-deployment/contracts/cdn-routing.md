@@ -19,7 +19,9 @@ Both origins use S3 REST API endpoints (not static website endpoints). Public ac
 
 ## Behavior Routing Contract
 
-Behaviors are evaluated in **priority order** (lower number = evaluated first). CloudFront matches on the most specific path pattern.
+Behaviors are evaluated in **priority order** (lower number = evaluated first). CloudFront matches the first behavior whose path pattern applies — it does not automatically prefer the most specific pattern.
+
+> **Important**: CloudFront path pattern `/dcv/*` does **not** match the bare path `/dcv`. A dedicated behavior for the exact path `/dcv` (Priority 3) is required to serve the homepage when users navigate to the root without a trailing slash.
 
 ### Behavior 1 — Binary Distribution (Priority: 1, highest)
 
@@ -61,7 +63,7 @@ Behaviors are evaluated in **priority order** (lower number = evaluated first). 
 
 | Incoming request URI | Transformed URI | S3 object | Expected response |
 |---------------------|-----------------|-----------|-------------------|
-| `/dcv` | `/index.html` | `index.html` | `200 OK`, HTML |
+| `/dcv` | `/index.html` | `index.html` | `200 OK`, HTML (matched by the `/dcv` exact-path behavior, Priority 3) |
 | `/dcv/` | `/index.html` | `index.html` | `200 OK`, HTML |
 | `/dcv/docs/quickstart` | `/docs/quickstart.html` | `docs/quickstart.html` | `200 OK`, HTML |
 | `/dcv/_astro/main.css` | `/_astro/main.css` | `_astro/main.css` | `200 OK`, CSS |

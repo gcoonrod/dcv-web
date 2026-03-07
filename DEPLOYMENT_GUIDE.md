@@ -124,6 +124,7 @@ You will add the website bucket as an origin to the distribution. The binary buc
 
 1. Open **CloudFront** → **Create a CloudFront distribution**
 1. Under **Origin domain**, select the website S3 bucket from the dropdown (shown as `<bucket>.s3.<region>.amazonaws.com`)
+1. Set **Name** to `dcv-website-s3`
 1. Under **Origin access**, select **Origin access control settings (recommended)**
 1. Under **Origin access control**, select `dcv-website-oac`
 1. Leave **Origin path** empty (CI syncs files to the bucket root)
@@ -206,11 +207,26 @@ To apply:
 
 ---
 
-## Step 9 — Add the Binary Bucket as a CloudFront Origin
+## Step 9 — Add S3 Buckets as CloudFront Origins
 
-The website bucket was added during distribution creation. Now add the binary bucket.
+Both the website bucket and the binary bucket must exist as origins on the distribution before behaviors can reference them.
 
-1. Open **CloudFront** → select your distribution → **Origins** tab → **Create origin**
+### 9a. Ensure the website bucket origin exists
+
+1. Open **CloudFront** → select your distribution → **Origins** tab
+1. Look for an origin whose domain matches your website S3 bucket (e.g., `dcv-web-assets-prod.s3.us-east-1.amazonaws.com`)
+1. **If it already exists** (you created a new distribution in Step 7 and named it `dcv-website-s3`), proceed to Step 9b
+1. **If it does not exist** (you are using a pre-existing distribution):
+   1. Click **Create origin**
+   1. Under **Origin domain**, select the website S3 bucket
+   1. Set **Name** to `dcv-website-s3`
+   1. Under **Origin access**, select **Origin access control settings (recommended)**
+   1. Under **Origin access control**, select `dcv-website-oac`
+   1. Click **Create origin**
+
+### 9b. Add the binary bucket origin
+
+1. On the **Origins** tab, click **Create origin**
 1. Under **Origin domain**, select the binary S3 bucket
 1. Set **Name** to `dcv-binaries-s3`
 1. Under **Origin access**, select **Origin access control settings (recommended)**
@@ -317,7 +333,7 @@ Open a new tab for this sub-step, then return:
 1. Under **Cache key settings**, leave all forwarding options set to **None**
 1. Click **Create**
 
-### 12b. Create the behavior
+### 12b. Create the `/dcv/*` behavior
 
 1. Open **CloudFront** → your distribution → **Behaviors** → **Create behavior**
 1. Set **Path pattern** to `/dcv/*`
@@ -330,7 +346,23 @@ Open a new tab for this sub-step, then return:
 1. Under **Function associations** → **Viewer request**, set **Function type** to `CloudFront Functions` and set **Function ARN/Name** to `dcv-index-resolver`
 1. Click **Create behavior**
 
-### 12c. Verify behavior priority ordering
+### 12c. Create the `/dcv` exact-path behavior
+
+CloudFront's `/dcv/*` path pattern does **not** match the bare path `/dcv` (no trailing slash). Without a dedicated behavior, a request to `https://apps.microcode.io/dcv` falls through to the default behavior and returns an error. Add a third behavior to handle this case:
+
+1. Click **Create behavior**
+1. Set **Path pattern** to `/dcv`
+1. Set **Origin and origin groups** to `dcv-website-s3`
+1. Set **Compress objects automatically** to **Yes**
+1. Set **Viewer protocol policy** to **Redirect HTTP to HTTPS**
+1. Set **Allowed HTTP methods** to **GET, HEAD**
+1. Set **Cache policy** to `dcv-website-24h`
+1. Under **Function associations** → **Viewer request**, set **Function type** to `CloudFront Functions` and set **Function ARN/Name** to `dcv-index-resolver`
+1. Click **Create behavior**
+
+The CloudFront Function rewrites `/dcv` → `/index.html`, so this behavior correctly serves the homepage.
+
+### 12d. Verify behavior priority ordering
 
 Open the **Behaviors** tab and confirm the order is exactly:
 
@@ -338,9 +370,10 @@ Open the **Behaviors** tab and confirm the order is exactly:
 | -------- | ----------------- |
 | 1        | `/dcv/releases/*` |
 | 2        | `/dcv/*`          |
+| 3        | `/dcv`            |
 | Default  | `*`               |
 
-If the ordering is wrong, select a behavior and use the **Edit** button to adjust. `/dcv/releases/*` **must** have the lower priority number (evaluated first). Reversed order causes binary download requests to be routed to the website bucket, returning HTML instead of the binary file.
+If the ordering is wrong, select a behavior and use the **Edit** button to adjust. `/dcv/releases/*` **must** have the lowest priority number (evaluated first). Reversed order causes binary download requests to be routed to the website bucket, returning HTML instead of the binary file.
 
 ---
 

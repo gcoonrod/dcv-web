@@ -24,7 +24,7 @@ astro.config.mjs    # output: 'static', @tailwindcss/vite
 ## Commands
 
 ```bash
-npm run dev       # Start dev server at http://localhost:4321
+npm run dev       # Start dev server at http://localhost:4321/dcv/
 npm run build     # Build static site to dist/
 npm run preview   # Preview production build locally
 ```
