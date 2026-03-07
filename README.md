@@ -39,11 +39,21 @@ Node 20+ required.
 src/
 ├── components/
 │   ├── Hero.astro            # Split-panel hero section
-│   └── TerminalMockup.astro  # Animated CLI demo, degrades without JS
+│   ├── TerminalMockup.astro  # Animated CLI demo, degrades without JS
+│   ├── FeatureGrid.astro     # Feature highlights grid
+│   ├── RoiSection.astro      # ROI / value proposition section
+│   ├── Pricing.astro         # Free vs Pro pricing cards
+│   └── DocsSidebar.astro     # Docs nav with build-time active state
+├── content/
+│   ├── config.ts             # Content Layer collection schema (Zod)
+│   └── docs/                 # Markdown doc pages (installation, quickstart, …)
 ├── layouts/
-│   └── Layout.astro          # Global HTML shell (fonts, meta, dark body)
+│   ├── Layout.astro          # Global HTML shell (fonts, meta, header, dark body)
+│   └── DocsLayout.astro      # Two-column docs layout (sidebar + prose content)
 ├── pages/
-│   └── index.astro           # Route: / — composes Layout + Hero
+│   ├── index.astro           # Route: / — composes Layout + Hero + sections
+│   └── docs/
+│       └── [...slug].astro   # Route: /docs/:slug — dynamic catch-all for docs
 └── styles/
     └── global.css            # Tailwind v4 entry point + @theme design tokens
 
@@ -51,7 +61,9 @@ public/
 └── favicon.svg               # >_ terminal prompt motif
 
 specs/                        # Feature design artifacts (speckit workflow)
-└── 001-scaffolding-and-hero/
+├── 001-scaffolding-and-hero/
+├── 002-roi-and-pricing/
+└── 003-docs-and-quickstart/
     ├── spec.md
     ├── plan.md
     ├── tasks.md
@@ -83,12 +95,17 @@ in production:
 dist/
 ├── index.html
 ├── favicon.svg
+├── docs/
+│   ├── installation/index.html
+│   ├── quickstart/index.html
+│   ├── configuration/index.html
+│   └── changelog/index.html
 └── _astro/
     └── *.css   # Tailwind-purged CSS bundle
 ```
 
-Zero JS bundles on first load. The terminal animation script is inlined directly into
-`index.html` via Astro's `define:vars` pattern.
+Zero JS bundles. The terminal animation script is inlined directly into `index.html`
+via Astro's `define:vars` pattern. Doc pages ship no JavaScript at all.
 
 ---
 
