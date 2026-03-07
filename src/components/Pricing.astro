@@ -52,7 +52,7 @@ const tiers: PricingTier[] = [
         <ul class="space-y-2 mb-6 flex-1">
           {tier.features.map((feature) => (
             <li class="flex items-start gap-2 text-slate-300 text-sm">
-              <span class="text-dcv-accent mt-0.5 shrink-0">✓</span>
+              <span class="text-dcv-accent mt-0.5 shrink-0" aria-hidden="true">✓</span>
               {feature}
             </li>
           ))}

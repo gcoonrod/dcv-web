@@ -3,16 +3,13 @@
 Auto-generated from all feature plans. Last updated: 2026-03-06
 
 ## Active Technologies
-- TypeScript (strict, Astro default) — inherited from Phase 1 + Astro 5.18.x, @tailwindcss/vite (Tailwind CSS v4) — inherited from Phase 1 (002-roi-and-pricing)
-- N/A — all content is hardcoded static data arrays within each componen (002-roi-and-pricing)
-
 - Node.js 20 LTS, TypeScript (strict, Astro default) + Astro 5.18.x, @tailwindcss/vite (Tailwind CSS v4), Geist Variable font, JetBrains Mono Variable font (001-scaffolding-and-hero)
 
 ## Project Structure
 
 ```text
 src/
-├── components/     # Astro components (Hero.astro, TerminalMockup.astro)
+├── components/     # Astro components (Hero.astro, TerminalMockup.astro, FeatureGrid.astro, RoiSection.astro, Pricing.astro)
 ├── layouts/        # Layout.astro (global HTML shell)
 ├── pages/          # index.astro (file-based routing)
 └── styles/         # global.css (Tailwind v4 @theme tokens)
@@ -33,7 +30,7 @@ npm run preview   # Preview production build locally
 Node.js 20 LTS, TypeScript (strict, Astro default): Follow standard conventions
 
 ## Recent Changes
-- 002-roi-and-pricing: Added TypeScript (strict, Astro default) — inherited from Phase 1 + Astro 5.18.x, @tailwindcss/vite (Tailwind CSS v4) — inherited from Phase 1
+- 002-roi-and-pricing: Added FeatureGrid, RoiSection, and Pricing components below Hero on the index page, building on the existing TypeScript, Astro 5.18.x, and Tailwind CSS v4 stack
 
 - 001-scaffolding-and-hero: Added Node.js 20 LTS, TypeScript (strict, Astro default) + Astro 5.18.x, @tailwindcss/vite (Tailwind CSS v4), Geist Variable font, JetBrains Mono fon
 
