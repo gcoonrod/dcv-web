@@ -4,6 +4,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-06
 
 ## Active Technologies
 - Node.js 20 LTS, TypeScript (strict, Astro default) + Astro 5.18.x, @tailwindcss/vite (Tailwind CSS v4), Geist Variable font, JetBrains Mono Variable font (001-scaffolding-and-hero)
+- TypeScript (strict, Astro default) — Node.js 20 LTS + Astro 5.18.x, `@tailwindcss/vite` (Tailwind CSS v4), `@tailwindcss/typography` (new) (003-docs-and-quickstart)
+- File-based — Markdown in `src/content/docs/`, validated at build time via Zod (003-docs-and-quickstart)
 
 ## Project Structure
 
@@ -30,6 +32,7 @@ npm run preview   # Preview production build locally
 Node.js 20 LTS, TypeScript (strict, Astro default): Follow standard conventions
 
 ## Recent Changes
+- 003-docs-and-quickstart: Added TypeScript (strict, Astro default) — Node.js 20 LTS + Astro 5.18.x, `@tailwindcss/vite` (Tailwind CSS v4), `@tailwindcss/typography` (new)
 - 002-roi-and-pricing: Added FeatureGrid, RoiSection, and Pricing components below Hero on the index page, building on the existing TypeScript, Astro 5.18.x, and Tailwind CSS v4 stack
 
 - 001-scaffolding-and-hero: Added Node.js 20 LTS, TypeScript (strict, Astro default) + Astro 5.18.x, @tailwindcss/vite (Tailwind CSS v4), Geist Variable font, JetBrains Mono fon
