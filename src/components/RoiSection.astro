@@ -1,0 +1,52 @@
+---
+interface RoiContentPair {
+  label: string;
+  text: string;
+}
+
+interface RoiExample {
+  before: { label: string; content: string };
+  after: { label: string; content: RoiContentPair[] };
+}
+
+const roiExample: RoiExample = {
+  before: {
+    label: "Raw Commit",
+    content: "fix(cache): resolve race condition in redis worker"
+  },
+  after: {
+    label: "STAR Accomplishment",
+    content: [
+      {
+        label: "Action",
+        text: "Architected a thread-safe Redis worker queue using atomic operations, eliminating a race condition affecting concurrent job processing."
+      },
+      {
+        label: "Result",
+        text: "Reduced P99 job queue latency by 40% and eliminated intermittent data loss incidents in production over a 6-month observation window."
+      }
+    ]
+  }
+};
+---
+
+<section aria-label="ROI section" class="py-16 px-6 bg-slate-900">
+  <h2 class="text-2xl font-semibold text-slate-100 text-center mb-10">From Commits to Compensation</h2>
+  <div class="flex flex-col md:flex-row gap-6 max-w-5xl mx-auto">
+    <div class="flex-1 min-w-0 overflow-hidden bg-slate-800 rounded-lg p-6 border border-slate-700">
+      <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">{roiExample.before.label}</h3>
+      <code class="font-mono text-dcv-accent text-sm block">{roiExample.before.content}</code>
+    </div>
+    <div class="flex-1 min-w-0 overflow-hidden bg-slate-950 rounded-lg p-6 border border-dcv-accent/30">
+      <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">{roiExample.after.label}</h3>
+      <dl class="space-y-4">
+        {roiExample.after.content.map((pair) => (
+          <div>
+            <dt class="text-sm font-semibold text-dcv-accent uppercase tracking-wide">{pair.label}</dt>
+            <dd class="text-slate-200 font-sans text-sm leading-relaxed mt-1">{pair.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>

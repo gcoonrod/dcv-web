@@ -1,0 +1,29 @@
+---
+interface Props {
+  entries: Array<{
+    id: string;
+    data: { title: string; order: number };
+  }>;
+  currentSlug: string;
+}
+
+const { entries, currentSlug } = Astro.props;
+---
+
+<nav aria-label="Documentation navigation">
+  <ul>
+    {entries.map((entry) => (
+      <li>
+        <a
+          href={`/docs/${entry.id}`}
+          aria-current={entry.id === currentSlug ? 'page' : undefined}
+          class={entry.id === currentSlug
+            ? 'text-dcv-accent font-bold'
+            : 'text-slate-400 hover:text-slate-200 transition-colors'}
+        >
+          {entry.data.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

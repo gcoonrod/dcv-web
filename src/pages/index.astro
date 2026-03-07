@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import RoiSection from '../components/RoiSection.astro';
+import Pricing from '../components/Pricing.astro';
+---
+
+<Layout title="dcv — The Developer CV Generator">
+  <Hero />
+  <FeatureGrid />
+  <RoiSection />
+  <!-- TODO: replace proPrice with checkout price when payment is configured -->
+  <Pricing proPrice="Coming soon" />
+</Layout>
