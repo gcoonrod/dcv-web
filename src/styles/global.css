@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  /* Project color tokens */
+  --color-dcv-bg: #0f172a;
+  --color-dcv-accent: #22d3ee;
+
+  /* Font families */
+  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+}

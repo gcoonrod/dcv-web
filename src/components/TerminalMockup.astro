@@ -1,0 +1,129 @@
+---
+interface CommandSequence {
+  /** The shell command string to type out (without the `$ ` prompt). */
+  input: string;
+  /** Lines of simulated output to reveal after typing is complete. */
+  output: string[];
+}
+
+interface Props {
+  /**
+   * Sequence of commands to animate in order.
+   * Loops back to the first command after the last completes.
+   */
+  commands?: CommandSequence[];
+  /**
+   * Milliseconds to hold the final state before clearing and restarting.
+   * @default 2000
+   */
+  pauseDuration?: number;
+}
+
+const DEFAULT_COMMANDS: CommandSequence[] = [
+  {
+    input: "dcv fetch --since 2025-01-01 --until 2025-06-30",
+    output: [
+      "✔ GitHub: 47 PRs, 117 commits",
+      "✔ 164 embedded",
+      "✔ Trello: 13 cards",
+      "✔ 13 embedded (164 skipped — unchanged)",
+    ],
+  },
+  {
+    input: "dcv analyze --since 2025-01-01 --until 2025-06-30",
+    output: [
+      "✔ Report saved to ~/.dcv/reports/dcv_report_20250101_to_20250630.md",
+      "Tokens: 14,424 input → 4,126 output | Model: claude-sonnet-4-6",
+    ],
+  },
+];
+
+const { commands = DEFAULT_COMMANDS, pauseDuration = 2000 } = Astro.props;
+---
+
+<figure
+  class="w-full rounded-lg overflow-hidden shadow-2xl"
+  role="img"
+  aria-label="Terminal demo showing dcv CLI commands"
+>
+  <!-- Chrome bar -->
+  <div class="bg-slate-700 px-4 py-2 flex items-center gap-2">
+    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+    <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+    <span class="ml-4 text-slate-400 text-xs font-mono">dcv — terminal</span>
+  </div>
+  <!-- Terminal body -->
+  <div class="bg-slate-800 p-4 font-mono text-sm min-h-[180px]">
+    <!-- Prompt line: typed by JS -->
+    <p class="text-dcv-accent">
+      <span class="select-none">$ </span>
+      <span id="term-input"></span>
+      <span id="term-cursor" class="animate-pulse">▋</span>
+    </p>
+    <!-- Output lines: revealed by JS -->
+    <div id="term-output" class="mt-1 text-slate-400 space-y-0.5"></div>
+  </div>
+  <!-- Fallback for JS-disabled: static final state -->
+  <noscript>
+    <div class="bg-slate-800 p-4 font-mono text-sm text-slate-400">
+      <p class="text-dcv-accent">$ dcv fetch --since 2025-01-01 --until 2025-06-30</p>
+      <p>✔ GitHub: 47 PRs, 117 commits</p>
+      <p>✔ 164 embedded</p>
+      <p>✔ Trello: 13 cards</p>
+      <p>✔ 13 embedded (164 skipped — unchanged)</p>
+    </div>
+  </noscript>
+</figure>
+
+<script is:inline define:vars={{ commands, pauseDuration }}>
+  let cmdIndex = 0;
+
+  function runCycle() {
+    const { input, output } = commands[cmdIndex];
+    const inputEl = document.getElementById("term-input");
+    const outputEl = document.getElementById("term-output");
+    const cursorEl = document.getElementById("term-cursor");
+
+    // TYPING_INPUT: append one character per tick
+    let charIndex = 0;
+    function typeChar() {
+      if (charIndex < input.length) {
+        inputEl.textContent += input[charIndex++];
+        setTimeout(typeChar, 60);
+      } else {
+        showOutput(0);
+      }
+    }
+
+    // SHOWING_OUTPUT: reveal one output line per tick
+    function showOutput(lineIndex) {
+      if (lineIndex < output.length) {
+        const line = document.createElement("p");
+        line.textContent = output[lineIndex];
+        outputEl.appendChild(line);
+        setTimeout(() => showOutput(lineIndex + 1), 300);
+      } else {
+        // PAUSED: hide cursor, hold final state
+        cursorEl.style.display = "none";
+        setTimeout(clearAndAdvance, pauseDuration);
+      }
+    }
+
+    // CLEARING: safe DOM removal, then advance to next command
+    function clearAndAdvance() {
+      inputEl.textContent = "";
+      while (outputEl.firstChild) {
+        outputEl.removeChild(outputEl.firstChild);
+      }
+      cursorEl.style.display = "";
+      cmdIndex = (cmdIndex + 1) % commands.length;
+      setTimeout(runCycle, 200);
+    }
+
+    typeChar();
+  }
+
+  // Astro defers scripts by default; DOM is ready at execution
+  runCycle();
+</script>
