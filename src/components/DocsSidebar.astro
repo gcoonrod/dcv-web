@@ -16,6 +16,7 @@ const { entries, currentSlug } = Astro.props;
       <li>
         <a
           href={`/docs/${entry.id}`}
+          aria-current={entry.id === currentSlug ? 'page' : undefined}
           class={entry.id === currentSlug
             ? 'text-dcv-accent font-bold'
             : 'text-slate-400 hover:text-slate-200 transition-colors'}

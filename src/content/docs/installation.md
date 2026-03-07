@@ -12,6 +12,8 @@ order: 1
 curl -fsSL https://dcv.dev/install.sh | bash
 ```
 
+> **Note:** Before running any `curl | bash` installer, you can review the script contents at `https://dcv.dev/install.sh`, or use the manual installation steps below.
+
 ## Manual Binary Download
 
 Download the latest binary for your platform from the [releases page](https://github.com/gcoonrod/dcv/releases).
