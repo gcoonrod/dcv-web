@@ -25,8 +25,8 @@ const { checkoutUrl, label = "Buy Pro" } = Astro.props;
 </a>
 
 <script>
-  // Locate this component's anchor in the DOM (ES module runs after DOM ready)
-  const trigger = document.querySelector<HTMLAnchorElement>('[data-checkout-trigger]');
+  // Locate all checkout triggers in the DOM (ES module runs after DOM ready)
+  const triggers = document.querySelectorAll('[data-checkout-trigger]');
 
   // Dynamically load lemon.js — LS auto-initializes overlay on .lemonsqueezy-button
   const lsScript = document.createElement('script');
@@ -35,15 +35,17 @@ const { checkoutUrl, label = "Buy Pro" } = Astro.props;
 
   lsScript.onerror = () => {
     // Script failed to load — show disabled unavailable state (FR-009)
-    if (!trigger) return;
-    const btn = document.createElement('button');
-    btn.disabled = true;
-    btn.setAttribute('aria-disabled', 'true');
-    btn.className =
-      'block w-full text-center py-3 px-6 rounded-md font-semibold ' +
-      'opacity-50 cursor-not-allowed pointer-events-none text-slate-400 border border-slate-600';
-    btn.textContent = 'Checkout temporarily unavailable';
-    trigger.replaceWith(btn);
+    triggers.forEach((trigger) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.disabled = true;
+      btn.setAttribute('aria-disabled', 'true');
+      btn.className =
+        'block w-full text-center py-3 px-6 rounded-md font-semibold ' +
+        'opacity-50 cursor-not-allowed pointer-events-none text-slate-400 border border-slate-600';
+      btn.textContent = 'Checkout temporarily unavailable';
+      trigger.replaceWith(btn);
+    });
   };
 
   document.head.appendChild(lsScript);

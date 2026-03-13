@@ -20,7 +20,7 @@ The specific purchasable SKU configured in the Lemon Squeezy dashboard represent
 | Attribute | Type | Description |
 |-----------|------|-------------|
 | `variant_id` | string | Unique LS variant identifier; used to construct the checkout URL |
-| `checkout_url` | string | Full Lemon Squeezy hosted checkout URL for this variant (e.g., `https://gcoonrod.lemonsqueezy.com/buy/{variant_id}`) |
+| `checkout_url` | string | Full Lemon Squeezy hosted checkout URL for this variant (e.g., `https://store.microcode.io/checkout/buy/{variant_id}`) |
 | `price_display` | string | Human-readable price string hardcoded in the Astro component (e.g., `"$49"`) |
 | `product_name` | string | `"DCV Pro"` — used for display and receipt labeling |
 | `license_type` | string | `"perpetual"` — covers all v1.x.x minor updates and patches |
@@ -28,7 +28,7 @@ The specific purchasable SKU configured in the Lemon Squeezy dashboard represent
 **Source of truth**: Lemon Squeezy dashboard. The `checkout_url` and `price_display` are the only values referenced by the static site.
 
 **Validation rules**:
-- `checkout_url` MUST be a valid HTTPS URL pointing to `*.lemonsqueezy.com`
+- `checkout_url` MUST be a valid HTTPS URL pointing to a Lemon Squeezy hosted checkout (native subdomain or custom store domain)
 - `price_display` MUST NOT be the placeholder string `"[PRICE]"` at deploy time
 
 ---
@@ -124,6 +124,6 @@ These values are set at build time in the Astro source and are not computed at r
 
 | Constant | Location | Example value |
 |----------|----------|---------------|
-| `CHECKOUT_URL` | `src/pages/index.astro` (passed as `checkoutUrl` prop → `Pricing.astro` → `CheckoutButton.astro`) | `https://gcoonrod.lemonsqueezy.com/buy/{variant}` |
+| `CHECKOUT_URL` | `src/pages/index.astro` (passed as `checkoutUrl` prop → `Pricing.astro` → `CheckoutButton.astro`) | `https://store.microcode.io/checkout/buy/{variant}` |
 | `PRO_PRICE` | `src/pages/index.astro` (prop) | `"$49"` |
 | `SUCCESS_URL` | Lemon Squeezy dashboard | `https://apps.microcode.io/dcv/success` |

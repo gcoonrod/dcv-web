@@ -556,7 +556,7 @@ After the Lemon Squeezy payment integration is deployed, add a Content Security 
 
 1. Open the [CloudFront console](https://console.aws.amazon.com/cloudfront/)
 2. Navigate to **Policies → Response headers**
-3. If a policy is already attached to the `/dcv/*` behavior (from Step 11), click **Edit** on that policy. Otherwise click **Create response headers policy**.
+3. If a response headers policy is already attached to the `/dcv/*` behavior (created in Step 12), click **Edit** on that policy. Otherwise click **Create response headers policy**.
 
 ### 19b — Add Content-Security-Policy Header
 
