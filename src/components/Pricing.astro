@@ -1,21 +1,20 @@
 ---
-interface Props {
-  proPrice?: string;  // Default: "[PRICE]"
-}
+import CheckoutButton from './CheckoutButton.astro';
 
-interface PricingCta {
-  label: string;
-  href: string;
+interface Props {
+  proPrice?: string;    // Default: "[PRICE]"
+  checkoutUrl: string;  // Lemon Squeezy checkout URL, e.g. https://store.example.com/checkout/buy/{variant-id}
 }
 
 interface PricingTier {
   name: string;
   price: string;
   features: string[];
-  cta: PricingCta;
+  ctaLabel: string;
+  ctaHref: string;
 }
 
-const { proPrice = "[PRICE]" } = Astro.props;
+const { proPrice = "[PRICE]", checkoutUrl } = Astro.props;
 
 const tiers: PricingTier[] = [
   {
@@ -26,7 +25,8 @@ const tiers: PricingTier[] = [
       "Public GitHub repositories",
       "Markdown report generation"
     ],
-    cta: { label: "Install Free", href: `${import.meta.env.BASE_URL}/docs/installation` }
+    ctaLabel: "Install Free",
+    ctaHref: `${import.meta.env.BASE_URL}/docs/installation`,
   },
   {
     name: "Pro",
@@ -37,8 +37,9 @@ const tiers: PricingTier[] = [
       "dcv query — Interactive RAG",
       "All minor updates & patches for v1.x.x"
     ],
-    cta: { label: "Buy Pro", href: "#" }
-  }
+    ctaLabel: "Buy Pro",
+    ctaHref: checkoutUrl,
+  },
 ];
 ---
 
@@ -63,16 +64,11 @@ const tiers: PricingTier[] = [
           </p>
         )}
         {tier.name === "Free" ? (
-          <a href={tier.cta.href} class="text-center text-dcv-accent underline underline-offset-4 text-sm hover:text-cyan-300 transition-colors">
-            {tier.cta.label}
+          <a href={tier.ctaHref} class="text-center text-dcv-accent underline underline-offset-4 text-sm hover:text-cyan-300 transition-colors">
+            {tier.ctaLabel}
           </a>
         ) : (
-          <>
-            <!-- TODO: replace href="#" with checkout URL when payment is configured -->
-            <a href={tier.cta.href} class="block text-center bg-dcv-accent text-dcv-bg font-semibold py-3 px-6 rounded-md hover:bg-cyan-300 transition-colors">
-              {tier.cta.label}
-            </a>
-          </>
+          <CheckoutButton checkoutUrl={tier.ctaHref} label={tier.ctaLabel} />
         )}
       </div>
     ))}

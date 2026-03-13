@@ -546,6 +546,55 @@ After the CloudFront invalidation completes (typically 30–60 seconds):
 
 ---
 
+## Step 19 — Configure CloudFront Response Headers Policy (Lemon Squeezy CSP)
+
+After the Lemon Squeezy payment integration is deployed, add a Content Security Policy header to the CloudFront distribution to allow the Lemon Squeezy checkout script and overlay iframe to load.
+
+**When to do this**: After deploying feature `005-lemonsqueezy-payments` for the first time.
+
+### 19a — Open or Create a Response Headers Policy
+
+1. Open the [CloudFront console](https://console.aws.amazon.com/cloudfront/)
+2. Navigate to **Policies → Response headers**
+3. If a response headers policy is already attached to the `/dcv/*` behavior (created in Step 12), click **Edit** on that policy. Otherwise click **Create response headers policy**.
+
+### 19b — Add Content-Security-Policy Header
+
+Under **Custom headers**, add or append:
+
+| Header name | Value |
+| --- | --- |
+| `Content-Security-Policy` | `script-src 'self' https://app.lemonsqueezy.com; frame-src https://assets.lemonsqueezy.com https://checkout.lemonsqueezy.com;` |
+
+> **Note**: The exact Lemon Squeezy iframe domain(s) should be verified by opening the pricing page in Chrome DevTools (Network/Console tab) and checking for any CSP violations when the overlay opens. Update the header value if additional domains are required.
+
+### 19c — Attach the Policy to the `/dcv/*` Behavior
+
+1. Go to **Distributions → [your distribution] → Behaviors**
+2. Edit the `/dcv/*` behavior
+3. Under **Response headers policy**, select the policy created/updated above
+4. Save and wait for the distribution to deploy (~1 minute)
+
+### 19d — Verify
+
+Open `https://apps.microcode.io/dcv/` in a browser with DevTools open. Click "Buy Pro" — the Lemon Squeezy checkout overlay should open with no CSP errors in the Console tab.
+
+### Checkout URL Location
+
+The Lemon Squeezy checkout URL is hardcoded in `src/pages/index.astro` as the `checkoutUrl` prop passed to `<Pricing />`. If the Lemon Squeezy product is ever recreated, update this value:
+
+```astro
+<!-- src/pages/index.astro -->
+<Pricing
+  checkoutUrl="https://{store}.lemonsqueezy.com/buy/{variant-id}"
+  proPrice="$XX"
+/>
+```
+
+After updating, redeploy via the GitHub Actions workflow (push to `main`).
+
+---
+
 ## Troubleshooting
 
 ### Certificate not issuing (stuck at Pending validation)
@@ -580,3 +629,4 @@ After the CloudFront invalidation completes (typically 30–60 seconds):
 
 - Confirm the IAM role policy covers `s3:PutObject`, `s3:DeleteObject`, and `s3:ListBucket` on the correct bucket ARN
 - Confirm the `WEB_BUCKET` secret value does not include the `s3://` prefix
+
