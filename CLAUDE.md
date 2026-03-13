@@ -8,6 +8,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-06
 - File-based — Markdown in `src/content/docs/`, validated at build time via Zod (003-docs-and-quickstart)
 - TypeScript + Node.js 20 LTS (Astro 5.18.x) + Astro 5.18.x, `@tailwindcss/vite` (v4), AWS CLI v2, GitHub Actions (004-aws-deployment)
 - Two private S3 buckets (website + binaries); CloudFront distribution (pre-provisioned) (004-aws-deployment)
+- TypeScript (strict) — Node.js 20 LTS + Astro 5.18.x, `@tailwindcss/vite` (Tailwind CSS v4), Lemon Squeezy `lemon.js` (external CDN script — no npm install) (005-lemonsqueezy-payments)
+- N/A — no persistent data on dcv-web; all data owned by Lemon Squeezy (005-lemonsqueezy-payments)
 
 ## Project Structure
 
@@ -34,9 +36,9 @@ npm run preview   # Preview production build locally
 Node.js 20 LTS, TypeScript (strict, Astro default): Follow standard conventions
 
 ## Recent Changes
+- 005-lemonsqueezy-payments: Added TypeScript (strict) — Node.js 20 LTS + Astro 5.18.x, `@tailwindcss/vite` (Tailwind CSS v4), Lemon Squeezy `lemon.js` (external CDN script — no npm install)
 - 004-aws-deployment: Added TypeScript + Node.js 20 LTS (Astro 5.18.x) + Astro 5.18.x, `@tailwindcss/vite` (v4), AWS CLI v2, GitHub Actions
 - 003-docs-and-quickstart: Added TypeScript (strict, Astro default) — Node.js 20 LTS + Astro 5.18.x, `@tailwindcss/vite` (Tailwind CSS v4), `@tailwindcss/typography` (new)
-- 002-roi-and-pricing: Added FeatureGrid, RoiSection, and Pricing components below Hero on the index page, building on the existing TypeScript, Astro 5.18.x, and Tailwind CSS v4 stack
 
 
 <!-- MANUAL ADDITIONS START -->

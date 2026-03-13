@@ -1,0 +1,52 @@
+---
+interface Props {
+  /** Full Lemon Squeezy hosted checkout URL, e.g. https://{store}.lemonsqueezy.com/buy/{variant-id} */
+  checkoutUrl: string;
+  /** Button label. Defaults to "Buy Pro". */
+  label?: string;
+}
+
+const { checkoutUrl, label = "Buy Pro" } = Astro.props;
+---
+
+<!--
+  Renders as a plain <a> link (works without JS — redirects to LS hosted checkout).
+  When lemon.js loads successfully, LS auto-binds the overlay to .lemonsqueezy-button.
+  If lemon.js fails to load, the onerror handler replaces this with a disabled button.
+  See: specs/005-lemonsqueezy-payments/contracts/checkout-overlay.md
+-->
+<a
+  href={checkoutUrl}
+  class="lemonsqueezy-button block text-center bg-dcv-accent text-dcv-bg font-semibold py-3 px-6 rounded-md hover:bg-cyan-300 transition-colors"
+  data-checkout-trigger
+  aria-label={label}
+>
+  {label}
+</a>
+
+<script>
+  // Locate all checkout triggers in the DOM (ES module runs after DOM ready)
+  const triggers = document.querySelectorAll('[data-checkout-trigger]');
+
+  // Dynamically load lemon.js — LS auto-initializes overlay on .lemonsqueezy-button
+  const lsScript = document.createElement('script');
+  lsScript.src = 'https://app.lemonsqueezy.com/js/lemon.js';
+  lsScript.defer = true;
+
+  lsScript.onerror = () => {
+    // Script failed to load — show disabled unavailable state (FR-009)
+    triggers.forEach((trigger) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.disabled = true;
+      btn.setAttribute('aria-disabled', 'true');
+      btn.className =
+        'block w-full text-center py-3 px-6 rounded-md font-semibold ' +
+        'opacity-50 cursor-not-allowed pointer-events-none text-slate-400 border border-slate-600';
+      btn.textContent = 'Checkout temporarily unavailable';
+      trigger.replaceWith(btn);
+    });
+  };
+
+  document.head.appendChild(lsScript);
+</script>
