@@ -215,17 +215,23 @@ fi
 # never touches the user's real ~/.gnupg. Verify the detached signature on
 # SHA256SUMS using that keyring. If verification fails, abort immediately with
 # a tamper warning (FR-008).
-#
-# TODO(build-pipeline): Replace <PUBLIC_KEY_PLACEHOLDER> with the ASCII-armored
-# GPG public key before the first release. Export it with:
-#   gpg --armor --export <KEY_ID>
-# See: specs/006-install-script/contracts/releases-folder-structure.md §Key Rotation
 # =============================================================================
 printf '==> Verifying signature...\n'
 
 cat > "${WORK_DIR}/pubkey.gpg" <<'EOF'
 -----BEGIN PGP PUBLIC KEY BLOCK-----
-<PUBLIC_KEY_PLACEHOLDER>
+
+mDMEaarvyxYJKwYBBAHaRw8BAQdAMiqxH2plYoeGdjXllPCGMxd8j+oRf+4iF79H
+F83D8Uu0N0dyZWcgQ29vbnJvZCAoZGN2LXNpZ25pbmcta2V5KSA8Z3JlZy5jb29u
+cm9kQGdtYWlsLmNvbT6IkwQTFgoAOxYhBO3zS9JZYVJ5VLGaUc3PwVQ+naANBQJp
+qu/LAhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEM3PwVQ+naANaq0A
+/1WPN5vQ8jJ3Uj852OMYt3FyIconqO5qg/WWmHZHlMbxAP9zLzlEvNUEv0+zWZ9+
+v18f116v0h4UV+pxHHaAhTsVAbg4BGmq78sSCisGAQQBl1UBBQEBB0ByvtlYWZSK
+MjMbd0fIvT5MUrHX0ALaJtGKA9wiD6xdIwMBCAeIeAQYFgoAIBYhBO3zS9JZYVJ5
+VLGaUc3PwVQ+naANBQJpqu/LAhsMAAoJEM3PwVQ+naAN9ZYA/2K3ggpzjUeargSe
+/PkAIrRbHdsoIRNDmIHPT0zsvd7mAQDjFbyNoyNfFrArMwvvxBngnoal3VxuqV0H
+7AT/ClIiDA==
+=APqK
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
 
