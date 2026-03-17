@@ -108,8 +108,10 @@ This project MUST follow the git-flow branching model:
   exclusively from `release/*` and `hotfix/*` branches.
 - **`develop`**: Integration branch. All feature work targets this branch. MUST remain
   in a buildable state at all times.
-- **`feature/<short-description>`**: Feature branches. MUST be branched from `develop`
-  and merged back to `develop` via pull request upon completion.
+- **`NNN-short-name`** (e.g., `006-install-script`): Feature branches. MUST be branched
+  from `develop` and merged back to `develop` via pull request upon completion. `NNN` is a
+  zero-padded three-digit sequential feature number; `short-name` is a 2–4 word kebab-case
+  description of the feature.
 - **`release/<version>`**: Release preparation branches (e.g., `release/1.2.0`). MUST
   be branched from `develop`. Only bug fixes, documentation, and version bumps are
   permitted. Merges into both `main` and `develop` on completion.
@@ -157,4 +159,4 @@ bloated software, value their privacy, and prefer terminal-based workflows.
 - All feature branches MUST follow the git-flow naming conventions defined in the
   Development Workflow section.
 
-**Version**: 1.1.0 | **Ratified**: 2026-03-05 | **Last Amended**: 2026-03-06
+**Version**: 1.2.0 | **Ratified**: 2026-03-05 | **Last Amended**: 2026-03-17
