@@ -25,7 +25,7 @@ All files MUST be available at `https://apps.microcode.io/dcv/releases/latest/<f
 | `dcv-linux-arm64` | `application/octet-stream` | Linux ARM64 binary |
 | `dcv-linux-x64` | `application/octet-stream` | Linux x86_64 binary |
 | `SHA256SUMS` | `text/plain` | SHA-256 checksums for all binaries |
-| `SHA256SUMS.sig` | `application/octet-stream` | OpenSSL detached signature of `SHA256SUMS` |
+| `SHA256SUMS.sig` | `application/octet-stream` | GPG detached signature of `SHA256SUMS` |
 
 ---
 
@@ -49,19 +49,25 @@ grep "dcv-${OS}-${ARCH}" SHA256SUMS | awk '{print $1}'
 
 ## SHA256SUMS.sig Format
 
-The `SHA256SUMS.sig` file is a detached OpenSSL binary signature of the `SHA256SUMS` file contents.
+The `SHA256SUMS.sig` file is a GPG detached binary signature of the `SHA256SUMS` file contents.
+
+> **Note (2026-03-17)**: The original spec targeted OpenSSL signing. This was changed post-implementation to GPG, which is the community standard for signing release artifacts (used by Debian, Alpine, Go, most GitHub release workflows). See `research.md` Decision 1 for full rationale.
 
 **Signing command** (build pipeline):
 ```sh
-openssl dgst -sha256 -sign private.pem -out SHA256SUMS.sig SHA256SUMS
+gpg --detach-sign SHA256SUMS
+# Produces SHA256SUMS.sig (binary format)
 ```
 
-**Verification command** (install script):
+**Verification command** (install script — isolated keyring):
 ```sh
-openssl dgst -sha256 -verify pubkey.pem -signature SHA256SUMS.sig SHA256SUMS
+GNUPGHOME="$(mktemp -d)"
+mkdir -m 700 "${GNUPGHOME}"
+gpg --homedir "${GNUPGHOME}" --quiet --import pubkey.gpg 2>/dev/null
+gpg --homedir "${GNUPGHOME}" --quiet --verify SHA256SUMS.sig SHA256SUMS 2>/dev/null
 ```
 
-The corresponding `pubkey.pem` (RSA or Ed25519 public key in PEM format) MUST be embedded in `install.sh`.
+The corresponding ASCII-armored GPG public key MUST be embedded in `install.sh` via a heredoc. The embedded key is imported into an isolated temporary keyring (`--homedir`) at runtime so the user's `~/.gnupg` is never touched.
 
 ---
 
@@ -83,8 +89,9 @@ The CloudFront distribution MUST serve these files with:
 ## Key Rotation
 
 When the signing key pair is rotated:
-1. Generate new key pair
-2. Update `install.sh` with the new public key PEM
-3. Re-sign `SHA256SUMS` with the new private key → new `SHA256SUMS.sig`
-4. Deploy updated `install.sh` and `SHA256SUMS.sig` atomically
-5. Old installs using the previous public key will fail signature verification and must re-fetch the updated `install.sh`
+1. Generate a new GPG key pair: `gpg --full-generate-key` (Ed25519 recommended)
+2. Export the new ASCII-armored public key: `gpg --armor --export <KEY_ID>`
+3. Update `install.sh` with the new public key (replace the embedded heredoc block)
+4. Re-sign `SHA256SUMS` with the new private key: `gpg --detach-sign SHA256SUMS` → new `SHA256SUMS.sig`
+5. Deploy updated `install.sh` and `SHA256SUMS.sig` atomically
+6. Old installs using the previous public key will fail signature verification and must re-fetch the updated `install.sh`

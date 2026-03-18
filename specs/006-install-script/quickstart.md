@@ -45,44 +45,54 @@ case "$OS_RAW" in
     ;;
 esac
 
-# Write embedded public key (heredoc is POSIX sh compatible)
-PUBKEY_FILE="${WORK_DIR}/pubkey.pem"
-cat > "${PUBKEY_FILE}" <<'EOF'
------BEGIN PUBLIC KEY-----
-<public key goes here>
------END PUBLIC KEY-----
+# Write embedded GPG public key (heredoc is POSIX sh compatible)
+cat > "${WORK_DIR}/pubkey.gpg" <<'EOF'
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+<ascii-armored gpg public key goes here>
+-----END PGP PUBLIC KEY BLOCK-----
 EOF
 ```
 
 ### 2. Generate a Signing Key Pair
 
-Before testing signature verification, generate a key pair:
+Before testing signature verification, generate a GPG key pair:
 
 ```sh
-# Generate RSA 4096 key pair
-openssl genrsa -out dcv-release-private.pem 4096
-openssl rsa -in dcv-release-private.pem -pubout -out dcv-release-public.pem
+# Generate an Ed25519 signing key (recommended — modern, compact)
+gpg --full-generate-key
+# Select: (1) ECC and ECC → Curve 25519 → no expiry → name: "dcv-signing-key" → email
 
-# Embed the public key contents in install.sh
-cat dcv-release-public.pem
+# Export the ASCII-armored public key for embedding in install.sh
+gpg --armor --export dcv-signing-key
 ```
 
-**Security**: Keep `dcv-release-private.pem` secret. Store it in a secrets manager, not the repository. Only `dcv-release-public.pem` goes into `install.sh`.
+Copy the output (the full `-----BEGIN PGP PUBLIC KEY BLOCK-----` ... `-----END PGP PUBLIC KEY BLOCK-----` block) and replace the heredoc contents in `public/install.sh` at the `STEP 7a` section.
+
+**Security**: The private key lives in your GPG keyring (`~/.gnupg`). Only the exported public key (ASCII-armored) goes into `install.sh`. For CI/CD use, export and store the private key in a secrets manager:
+```sh
+gpg --armor --export-secret-keys dcv-signing-key > dcv-signing-key-private.asc
+# Store dcv-signing-key-private.asc in your secrets manager, NOT in the repository
+```
 
 ### 3. Create Mock Release Artifacts for Testing
 
 ```sh
-# Create a fake binary
-echo "mock dcv binary" > /tmp/test-releases/dcv-darwin-arm64
-echo "mock dcv binary" > /tmp/test-releases/dcv-linux-x64
-
-# Generate checksums
+mkdir -p /tmp/test-releases
 cd /tmp/test-releases
-sha256sum dcv-darwin-arm64 dcv-linux-x64 > SHA256SUMS
-# macOS: shasum -a 256 ... > SHA256SUMS
 
-# Sign the checksum file
-openssl dgst -sha256 -sign dcv-release-private.pem -out SHA256SUMS.sig SHA256SUMS
+# Create fake binaries
+echo "mock dcv binary" > dcv-darwin-arm64
+echo "mock dcv binary" > dcv-linux-x64
+echo "mock dcv binary" > dcv-linux-arm64
+echo "mock dcv binary" > dcv-darwin-x64
+
+# Generate checksums (Linux: sha256sum, macOS: shasum -a 256)
+sha256sum dcv-* > SHA256SUMS
+# macOS: shasum -a 256 dcv-* > SHA256SUMS
+
+# Sign the checksum file with GPG (binary detached signature)
+gpg --detach-sign SHA256SUMS
+# Produces SHA256SUMS.sig
 ```
 
 ### 4. Lint with ShellCheck
@@ -127,7 +137,7 @@ Test against each target before merging:
 
 Docker one-liner for Linux testing:
 ```sh
-docker run --rm -it ubuntu:22.04 bash -c "apt-get update -q && apt-get install -y curl openssl && curl -fsSL https://apps.microcode.io/dcv/install.sh | sh"
+docker run --rm -it ubuntu:22.04 bash -c "apt-get update -q && apt-get install -y curl gpg && curl -fsSL https://apps.microcode.io/dcv/install.sh | sh"
 ```
 
 ### 7. Deploy
@@ -163,7 +173,7 @@ The existing AWS deployment pipeline (feature 004) syncs `dist/` to S3, serving 
 - [ ] Corrupted binary fails checksum verification with clear error
 - [ ] Bad signature file fails signature verification with tamper warning
 - [ ] Missing `curl` exits with actionable install instructions
-- [ ] Missing `openssl` exits with actionable install instructions
+- [ ] Missing `gpg` exits with actionable install instructions
 - [ ] `DCV_INSTALL_PATH=/custom/path` installs to custom path
 - [ ] Ctrl-C during download leaves no temp files
 - [ ] `~/.local/bin` not in PATH → shell-specific guidance shown

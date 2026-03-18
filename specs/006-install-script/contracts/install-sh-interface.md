@@ -31,7 +31,7 @@
 | OS type | `uname -s` | Platform detection |
 | CPU arch | `uname -m` | Platform detection |
 | `curl` availability | `command -v curl` | Prerequisite check |
-| `openssl` availability | `command -v openssl` | Prerequisite check |
+| `gpg` availability | `command -v gpg` | Prerequisite check |
 | `sha256sum`/`shasum` availability | `command -v sha256sum` / `command -v shasum` | Prerequisite check |
 | Existing binary at install path | `[ -f "${install_path}" ]` | Idempotency / upgrade detection |
 | `$PATH` contents | `$PATH` env var | Post-install PATH guidance |
@@ -160,7 +160,7 @@ The following must be available on `PATH` before the script is invoked:
 | Tool | Purpose | Platform availability |
 |------|---------|----------------------|
 | `curl` | Download binaries and checksum files | Universally available |
-| `openssl` | Verify `SHA256SUMS.sig` signature | macOS (LibreSSL), Linux (openssl package) |
-| `sha256sum` OR `shasum` | Verify binary checksum | Linux (`sha256sum`), macOS (`shasum`) |
+| `gpg` | Verify `SHA256SUMS.sig` signature | Linux (default); macOS via `brew install gnupg`; Alpine via `apk add gnupg` |
+| `sha256sum` OR `shasum` | Verify binary checksum | Linux (`sha256sum`); macOS (`shasum`) |
 
 If any prerequisite is missing, the script exits immediately with code 1 and an actionable install message before attempting any network requests.

@@ -6,40 +6,45 @@
 
 ---
 
-## Decision 1: Signing Tool — OpenSSL
+## Decision 1: Signing Tool — GPG
 
-**Decision**: Use **OpenSSL** (`openssl dgst -verify`) for cryptographic signature verification of the `SHA256SUMS` file. The public key is embedded directly in `install.sh` using a POSIX-compatible heredoc written to a temp file.
+**Decision**: Use **GPG** (`gpg --verify`) for cryptographic signature verification of the `SHA256SUMS` file. The public key (ASCII-armored, exported with `gpg --armor --export`) is embedded directly in `install.sh` using a POSIX-compatible heredoc. Verification uses an isolated temporary keyring (`--homedir`) so the user's `~/.gnupg` is never touched.
+
+> **Post-spec change (2026-03-17)**: The original spec targeted OpenSSL based on a zero-dependency goal for macOS. This was revised during implementation: dcv targets developers, who are expected to have GPG available or be able to install it. GPG is the community standard for signing release artifacts and produces a more conventional, auditable trust chain.
 
 **Rationale**:
-- `openssl` ships with macOS (as LibreSSL, fully command-compatible for this use case)
-- `openssl` is installed by default on Ubuntu 22.04, Debian 12, and most Linux distributions
-- GPG (`gpg`/`gpg2`) is **not** available on stock macOS — it requires Homebrew or a separate installer, which defeats the zero-dependency goal
-- OpenSSL detached signature verification is POSIX sh compatible: write the PEM public key to a temp file via heredoc (`cat > "$PUBKEY" <<'EOF'`), then run `openssl dgst -sha256 -verify "$PUBKEY" -signature SHA256SUMS.sig SHA256SUMS`
-- minisign is not widely pre-installed; rejected for the same reason as GPG
+- GPG is the industry standard for signing release artifacts (used by Debian, Alpine, Go, most GitHub release workflows)
+- `gpg` is available by default on Linux; macOS developers are expected to have it via Homebrew (`brew install gnupg`)
+- The script fails early with a clear, actionable install message if `gpg` is absent — dcv targets developers, not general consumers
+- GPG detached signature verification is POSIX sh compatible: write the armored public key to a temp file via heredoc, import into an isolated `--homedir` keyring, then run `gpg --homedir "$GNUPGHOME" --verify SHA256SUMS.sig SHA256SUMS`
+- The isolated keyring approach (`mkdir -m 700 "$GNUPGHOME"`) means the embedded key never touches the user's real `~/.gnupg`
 
 **Alternatives considered**:
-- **GPG**: Standard for signing releases; available on Linux by default but NOT on macOS stock. Rejected — breaks macOS zero-dependency requirement.
-- **minisign**: Simple, security-focused; but not available on any stock platform. Rejected.
-- **HTTPS-only (no signature verification)**: The approach used by Homebrew, Rustup, and Deno. Acceptable for many tools, but our spec (FR-007) explicitly requires signature verification. Rejected.
-- **SSH key signing** (`ssh-keygen -Y verify`): Available in OpenSSH 8.0+ but macOS ships a sufficiently old OpenSSH where this may vary. OpenSSL is more consistent. Rejected.
+- **OpenSSL** (`openssl dgst -sha256 -verify`): Available on stock macOS (LibreSSL) and Linux. Rejected post-spec — less conventional for release signing, GPG is the community expectation.
+- **minisign**: Simple, modern; not pre-installed on any stock platform. Rejected.
+- **HTTPS-only (no signature verification)**: The approach used by Homebrew, Rustup, and Deno. Rejected — FR-007 explicitly requires signature verification.
+- **SSH key signing** (`ssh-keygen -Y verify`): Available in OpenSSH 8.0+ but not universally present. Rejected.
 
-**POSIX sh pattern for key embedding**:
+**POSIX sh pattern**:
 ```sh
-# Write embedded public key to temp file (POSIX sh compatible — no process substitution)
-PUBKEY_FILE="${WORK_DIR}/pubkey.pem"
-cat > "${PUBKEY_FILE}" <<'EOF'
------BEGIN PUBLIC KEY-----
-<base64-encoded-RSA-or-Ed25519-public-key>
------END PUBLIC KEY-----
+# Write embedded GPG public key to temp file (POSIX heredoc — no process substitution)
+cat > "${WORK_DIR}/pubkey.gpg" <<'EOF'
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+<ascii-armored-gpg-public-key>
+-----END PGP PUBLIC KEY BLOCK-----
 EOF
 
-# Verify signature
-openssl dgst -sha256 -verify "${PUBKEY_FILE}" \
-    -signature "${WORK_DIR}/SHA256SUMS.sig" \
-    "${WORK_DIR}/SHA256SUMS"
+# Import into isolated keyring (mode 700 required by gpg)
+GNUPGHOME="${WORK_DIR}/gnupg"
+mkdir -m 700 "${GNUPGHOME}"
+gpg --homedir "${GNUPGHOME}" --quiet --import "${WORK_DIR}/pubkey.gpg" 2>/dev/null
+
+# Verify detached signature
+gpg --homedir "${GNUPGHOME}" --quiet \
+    --verify "${WORK_DIR}/SHA256SUMS.sig" "${WORK_DIR}/SHA256SUMS" 2>/dev/null
 ```
 
-**Alpine note**: Alpine Linux minimal images may not include `openssl` by default. The script treats `openssl` as a prerequisite (FR-013) and exits with an actionable error if missing: `"openssl is required for signature verification. Install it with: apk add openssl"`.
+**Alpine note**: Alpine Linux minimal images may not include `gpg` by default. The script treats `gpg` as a prerequisite (FR-013) and exits with an actionable error if missing: `"gpg is not installed. Install gpg: apk add gnupg"`.
 
 ---
 
