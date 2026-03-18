@@ -146,6 +146,10 @@ if [ -f "${INSTALL_PATH}" ]; then
   fi
 
   LATEST_HASH="$(grep "${BINARY_NAME}" "${TMP_SUMS}" | awk '{print $1}')"
+  if [ -z "${LATEST_HASH}" ]; then
+    die "No checksum entry found for ${BINARY_NAME} in SHA256SUMS.\nCheck https://apps.microcode.io/dcv/releases/latest/ manually."
+  fi
+
   INSTALLED_HASH="$(${SHA256_CMD} "${INSTALL_PATH}" | awk '{print $1}')"
 
   if [ "${LATEST_HASH}" = "${INSTALLED_HASH}" ]; then
@@ -168,8 +172,9 @@ fi
 # ${TMPDIR:-/tmp} handles macOS where TMPDIR is set to a session-specific path.
 # =============================================================================
 WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/dcv-install.XXXXXX")"
-# Supersede any prior trap; remove both TMP_SUMS (if created) and WORK_DIR
-trap 'rm -f "${TMP_SUMS}"; rm -rf "${WORK_DIR}"' EXIT INT TERM
+# Supersede any prior trap; guard TMP_SUMS removal — it is empty on a fresh
+# install and some platforms emit an error for `rm -f ""`.
+trap '[ -n "${TMP_SUMS}" ] && rm -f "${TMP_SUMS}"; rm -rf "${WORK_DIR}"' EXIT INT TERM
 
 # =============================================================================
 # STEP 6 — Download release artifacts (FR-004, FR-005, FR-006, FR-007)
@@ -261,6 +266,10 @@ fi
 printf '==> Verifying checksum...\n'
 
 EXPECTED_HASH="$(grep "${BINARY_NAME}" "${WORK_DIR}/SHA256SUMS" | awk '{print $1}')"
+if [ -z "${EXPECTED_HASH}" ]; then
+  die "No checksum entry found for ${BINARY_NAME} in SHA256SUMS.\nCheck https://apps.microcode.io/dcv/releases/latest/ manually."
+fi
+
 ACTUAL_HASH="$(${SHA256_CMD} "${WORK_DIR}/${BINARY_NAME}" | awk '{print $1}')"
 
 if [ "${EXPECTED_HASH}" != "${ACTUAL_HASH}" ]; then
