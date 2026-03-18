@@ -8,11 +8,11 @@ order: 1
 
 ## Quick Install (Recommended)
 
-```bash
-curl -fsSL https://apps.microcode.io/dcv/install.sh | bash
+```sh
+curl -fsSL https://apps.microcode.io/dcv/install.sh | sh
 ```
 
-> **Note:** Before running any `curl | bash` installer, you can review the script contents at `https://apps.microcode.io/dcv/install.sh`, or use the manual installation steps below.
+> **Note:** Before running any `curl | sh` installer, you can review the script contents at `https://apps.microcode.io/dcv/install.sh`, or use the manual installation steps below.
 
 ## Manual Binary Download
 
