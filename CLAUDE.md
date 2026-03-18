@@ -12,6 +12,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-06
 - N/A — no persistent data on dcv-web; all data owned by Lemon Squeezy (005-lemonsqueezy-payments)
 - TypeScript (strict) — Node.js 20 LTS + Astro 5.18.x + `@tailwindcss/vite` (Tailwind v4), `@tailwindcss/typography` (prose rendering for docs) (001-update-docs)
 - File-based — Markdown in `src/content/docs/`, Zod-validated at build time (`src/content/config.ts`) (001-update-docs)
+- POSIX sh (`#!/bin/sh`, `set -eu`) — no bash-specific syntax + `curl` (download), `openssl` (signature verification — LibreSSL on macOS, openssl on Linux), `sha256sum`/`shasum` (checksum — detected at runtime) (006-install-script)
+- Local filesystem — `$DCV_INSTALL_PATH` (default `$HOME/.local/bin`); ephemeral `mktemp -d` working directory (006-install-script)
 
 ## Project Structure
 
@@ -38,9 +40,9 @@ npm run preview   # Preview production build locally
 Node.js 20 LTS, TypeScript (strict, Astro default): Follow standard conventions
 
 ## Recent Changes
+- 006-install-script: Added POSIX sh (`#!/bin/sh`, `set -eu`) — no bash-specific syntax + `curl` (download), `openssl` (signature verification — LibreSSL on macOS, openssl on Linux), `sha256sum`/`shasum` (checksum — detected at runtime)
 - 001-update-docs: Added TypeScript (strict) — Node.js 20 LTS + Astro 5.18.x + `@tailwindcss/vite` (Tailwind v4), `@tailwindcss/typography` (prose rendering for docs)
 - 005-lemonsqueezy-payments: Added TypeScript (strict) — Node.js 20 LTS + Astro 5.18.x, `@tailwindcss/vite` (Tailwind CSS v4), Lemon Squeezy `lemon.js` (external CDN script — no npm install)
-- 004-aws-deployment: Added TypeScript + Node.js 20 LTS (Astro 5.18.x) + Astro 5.18.x, `@tailwindcss/vite` (v4), AWS CLI v2, GitHub Actions
 
 
 <!-- MANUAL ADDITIONS START -->
