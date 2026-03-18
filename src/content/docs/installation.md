@@ -20,16 +20,15 @@ Download the latest binary for your platform from the [releases page](https://gi
 
 | Platform | Binary |
 |---|---|
-| macOS (Apple Silicon) | `dcv-macos-arm64` |
-| macOS (Intel) | `dcv-macos-x86_64` |
-| Linux (x86_64) | `dcv-linux-x86_64` |
-| Windows | `dcv-windows-x86_64.exe` |
+| macOS (Apple Silicon) | `dcv-darwin-arm64` |
+| macOS (Intel) | `dcv-darwin-x64` |
+| Linux (x86_64) | `dcv-linux-x64` |
 
 Place the binary in a directory on your `$PATH` and make it executable:
 
 ```bash
-chmod +x dcv-macos-arm64
-mv dcv-macos-arm64 /usr/local/bin/dcv
+chmod +x dcv-darwin-arm64
+mv dcv-darwin-arm64 /usr/local/bin/dcv
 ```
 
 Verify the install:
