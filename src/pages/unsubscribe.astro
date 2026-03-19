@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Unsubscribe — dcv" description="Unsubscribe from dcv email notifications.">
   <section aria-label="Unsubscribe" class="py-16 px-6 max-w-2xl mx-auto">
-    <div id="unsub-loading" class="text-center">
+    <div id="unsub-loading" class="hidden text-center">
       <p class="text-slate-400 text-sm">Processing your unsubscribe request...</p>
     </div>
 
@@ -17,7 +17,7 @@ import Layout from '../layouts/Layout.astro';
 
     <div id="unsub-error" class="hidden text-center" role="alert">
       <span class="text-red-400 text-4xl" aria-hidden="true">&#x2717;</span>
-      <h1 class="text-2xl font-bold text-slate-100 mt-4">Unable to unsubscribe</h1>
+      <h1 class="text-2xl font-bold text-slate-100 mt-4" tabindex="-1" id="unsub-error-heading">Unable to unsubscribe</h1>
       <p class="text-slate-400 mt-3 text-sm">
         We couldn't process your request. Please contact
         <a href="mailto:support@microcode.io" class="text-dcv-accent underline">support@microcode.io</a>
@@ -47,6 +47,7 @@ import Layout from '../layouts/Layout.astro';
     var successEl = document.getElementById('unsub-success');
     var errorEl = document.getElementById('unsub-error');
     var successHeading = document.getElementById('unsub-success-heading');
+    var errorHeading = document.getElementById('unsub-error-heading');
 
     // Strip sensitive params from browser history/address bar
     if (window.history && window.history.replaceState) {
@@ -54,10 +55,13 @@ import Layout from '../layouts/Layout.astro';
     }
 
     if (!email || !token) {
-      if (loadingEl) loadingEl.classList.add('hidden');
       if (errorEl) errorEl.classList.remove('hidden');
+      if (errorHeading) errorHeading.focus();
       return;
     }
+
+    // Show loading state (hidden by default for no-JS)
+    if (loadingEl) loadingEl.classList.remove('hidden');
 
     fetch('https://api.microcode.io/dcv/subscribers?email=' + encodeURIComponent(email) + '&token=' + encodeURIComponent(token), {
       method: 'DELETE',
@@ -72,6 +76,7 @@ import Layout from '../layouts/Layout.astro';
       .catch(function () {
         if (loadingEl) loadingEl.classList.add('hidden');
         if (errorEl) errorEl.classList.remove('hidden');
+        if (errorHeading) errorHeading.focus();
       });
   })();
   </script>
