@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Unsubscribe — dcv" description="Unsubscribe from dcv email notifications.">
+  <section aria-label="Unsubscribe" class="py-16 px-6 max-w-2xl mx-auto">
+    <div id="unsub-loading" class="text-center">
+      <p class="text-slate-400 text-sm">Processing your unsubscribe request...</p>
+    </div>
+
+    <div id="unsub-success" class="hidden text-center" role="status" aria-live="polite">
+      <span class="text-dcv-accent text-4xl" aria-hidden="true">&#10003;</span>
+      <h1 class="text-2xl font-bold text-slate-100 mt-4" tabindex="-1" id="unsub-success-heading">You've been unsubscribed</h1>
+      <p class="text-slate-400 mt-3 text-sm">You won't receive further emails from dcv.</p>
+      <a href={import.meta.env.BASE_URL} class="inline-block mt-6 text-dcv-accent text-sm hover:underline">&larr; Back to home</a>
+    </div>
+
+    <div id="unsub-error" class="hidden text-center" role="alert">
+      <span class="text-red-400 text-4xl" aria-hidden="true">&#x2717;</span>
+      <h1 class="text-2xl font-bold text-slate-100 mt-4">Unable to unsubscribe</h1>
+      <p class="text-slate-400 mt-3 text-sm">
+        We couldn't process your request. Please contact
+        <a href="mailto:support@microcode.io" class="text-dcv-accent underline">support@microcode.io</a>
+        for assistance.
+      </p>
+      <a href={import.meta.env.BASE_URL} class="inline-block mt-6 text-dcv-accent text-sm hover:underline">&larr; Back to home</a>
+    </div>
+
+    <noscript>
+      <div class="text-center">
+        <p class="text-slate-400 text-sm">
+          JavaScript is required to process your unsubscribe request. Please contact
+          <a href="mailto:support@microcode.io" class="text-dcv-accent underline">support@microcode.io</a>
+          to unsubscribe manually.
+        </p>
+      </div>
+    </noscript>
+  </section>
+
+  <script is:inline>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var email = params.get('email');
+    var token = params.get('token');
+
+    var loadingEl = document.getElementById('unsub-loading');
+    var successEl = document.getElementById('unsub-success');
+    var errorEl = document.getElementById('unsub-error');
+    var successHeading = document.getElementById('unsub-success-heading');
+
+    if (!email || !token) {
+      if (loadingEl) loadingEl.classList.add('hidden');
+      if (errorEl) errorEl.classList.remove('hidden');
+      return;
+    }
+
+    fetch('https://api.microcode.io/dcv/subscribers?email=' + encodeURIComponent(email) + '&token=' + encodeURIComponent(token), {
+      method: 'DELETE',
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Failed');
+        if (loadingEl) loadingEl.classList.add('hidden');
+        if (successEl) successEl.classList.remove('hidden');
+        if (successHeading) successHeading.focus();
+      })
+      .catch(function () {
+        if (loadingEl) loadingEl.classList.add('hidden');
+        if (errorEl) errorEl.classList.remove('hidden');
+      });
+  })();
+  </script>
+</Layout>

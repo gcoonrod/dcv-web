@@ -97,7 +97,96 @@ const tiers: PricingTier[] = [
             Available After Beta
           </button>
         )}
+        {tier.name === "Pro" && (
+          <div class="border-t border-slate-700 pt-4 mt-5">
+            <form id="notify-form" class="space-y-3">
+              <p class="text-slate-300 text-sm font-medium">Get notified when Pro launches</p>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name (optional)"
+                aria-label="Your name"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              />
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Email address"
+                aria-label="Email address"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              />
+              <button
+                type="submit"
+                id="notify-btn"
+                class="w-full bg-dcv-accent text-dcv-bg font-semibold text-sm py-2.5 px-4 rounded-md hover:bg-dcv-accent/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Notify Me
+              </button>
+              <p class="text-slate-500 text-xs text-center">No spam. Unsubscribe anytime.</p>
+            </form>
+            <div id="notify-success" class="hidden text-center py-3" role="status" aria-live="polite">
+              <p class="text-dcv-accent text-sm font-medium" tabindex="-1" id="notify-success-msg">You're on the list!</p>
+              <p class="text-slate-500 text-xs mt-1">We'll email you when Pro is available.</p>
+            </div>
+            <noscript>
+              <a href="mailto:support@microcode.io?subject=Pro%20Launch%20Notification" class="text-dcv-accent text-xs underline">
+                Email us to get notified
+              </a>
+            </noscript>
+          </div>
+        )}
       </div>
     ))}
   </div>
 </section>
+
+<script is:inline>
+(function () {
+  var form = document.getElementById('notify-form');
+  var btn = document.getElementById('notify-btn');
+  var successEl = document.getElementById('notify-success');
+  var successMsg = document.getElementById('notify-success-msg');
+
+  if (!form || !btn || !successEl) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var email = form.querySelector('[name="email"]').value.trim();
+    var name = form.querySelector('[name="name"]').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    fetch('https://api.microcode.io/dcv/subscribers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, name: name || undefined }),
+    })
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            throw new Error(data.error || 'Something went wrong. Please try again.');
+          });
+        }
+        form.classList.add('hidden');
+        successEl.classList.remove('hidden');
+        if (successMsg) successMsg.focus();
+      })
+      .catch(function (err) {
+        var errorEl = document.getElementById('notify-error');
+        if (!errorEl) {
+          errorEl = document.createElement('p');
+          errorEl.id = 'notify-error';
+          errorEl.className = 'text-red-400 text-xs mt-2';
+          errorEl.setAttribute('role', 'alert');
+          form.appendChild(errorEl);
+        }
+        errorEl.textContent = err.message;
+        btn.disabled = false;
+        btn.textContent = 'Notify Me';
+      });
+  });
+})();
+</script>
