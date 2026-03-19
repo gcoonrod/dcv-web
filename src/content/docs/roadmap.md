@@ -8,7 +8,7 @@ order: 40
 
 Feature availability and what's coming next for dcv.
 
-## ✅ Available Now (Free Tier)
+## ✅ Available Now (Free)
 
 ### Sources
 
