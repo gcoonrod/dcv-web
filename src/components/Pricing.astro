@@ -99,7 +99,7 @@ const tiers: PricingTier[] = [
         )}
         {tier.name === "Pro" && (
           <div class="border-t border-slate-700 pt-4 mt-5">
-            <form id="notify-form" class="space-y-3">
+            <form id="notify-form" action="mailto:support@microcode.io?subject=Pro%20Launch%20Notification" method="POST" enctype="text/plain" class="space-y-3">
               <p class="text-slate-300 text-sm font-medium">Get notified when Pro launches</p>
               <input
                 type="text"
@@ -155,6 +155,9 @@ const tiers: PricingTier[] = [
 
     var email = form.querySelector('[name="email"]').value.trim();
     var name = form.querySelector('[name="name"]').value.trim();
+
+    var existingErrorEl = document.getElementById('notify-error');
+    if (existingErrorEl) existingErrorEl.textContent = '';
 
     btn.disabled = true;
     btn.textContent = 'Sending...';

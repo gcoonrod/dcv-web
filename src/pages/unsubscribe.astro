@@ -48,6 +48,11 @@ import Layout from '../layouts/Layout.astro';
     var errorEl = document.getElementById('unsub-error');
     var successHeading = document.getElementById('unsub-success-heading');
 
+    // Strip sensitive params from browser history/address bar
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
     if (!email || !token) {
       if (loadingEl) loadingEl.classList.add('hidden');
       if (errorEl) errorEl.classList.remove('hidden');
@@ -56,6 +61,7 @@ import Layout from '../layouts/Layout.astro';
 
     fetch('https://api.microcode.io/dcv/subscribers?email=' + encodeURIComponent(email) + '&token=' + encodeURIComponent(token), {
       method: 'DELETE',
+      referrerPolicy: 'no-referrer',
     })
       .then(function (res) {
         if (!res.ok) throw new Error('Failed');
