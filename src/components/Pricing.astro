@@ -3,10 +3,15 @@ interface Props {
   proPrice?: string;    // Default: "[PRICE]"
 }
 
+interface PricingFeature {
+  text: string;
+  annotation?: string;
+}
+
 interface PricingTier {
   name: string;
   price: string;
-  features: string[];
+  features: PricingFeature[];
   ctaLabel: string;
   ctaHref?: string;
 }
@@ -18,9 +23,11 @@ const tiers: PricingTier[] = [
     name: "Free",
     price: "Free",
     features: [
-      "Local Git repositories",
-      "Public GitHub repositories",
-      "Markdown report generation"
+      { text: "GitHub repositories (public & private)" },
+      { text: "Trello boards" },
+      { text: "Local Git repositories" },
+      { text: "AI-powered analysis & comparison (Anthropic)" },
+      { text: "Markdown, HTML & LaTeX export" },
     ],
     ctaLabel: "Install Free",
     ctaHref: `${import.meta.env.BASE_URL}/docs/installation`,
@@ -29,10 +36,10 @@ const tiers: PricingTier[] = [
     name: "Pro",
     price: proPrice,
     features: [
-      "Jira, Linear, GH Enterprise, GitLab fetchers",
-      "HTML & LaTeX export formats",
-      "dcv query — Interactive RAG",
-      "All minor updates & patches for v1.x.x"
+      { text: "dcv query — Interactive RAG" },
+      { text: "Journal — ad-hoc work logging", annotation: "coming Phase 2" },
+      { text: "Enterprise sources: Jira, Linear, GitLab, Azure DevOps", annotation: "planned" },
+      { text: "All minor updates & patches for v1.x.x" },
     ],
     ctaLabel: "Buy Pro",
   },
@@ -62,7 +69,12 @@ const tiers: PricingTier[] = [
           {tier.features.map((feature) => (
             <li class="flex items-start gap-2 text-slate-300 text-sm">
               <span class="text-dcv-accent mt-0.5 shrink-0" aria-hidden="true">✓</span>
-              {feature}
+              <span>
+                {feature.text}
+                {feature.annotation && (
+                  <span class="text-slate-500 text-xs"> ({feature.annotation})</span>
+                )}
+              </span>
             </li>
           ))}
         </ul>
