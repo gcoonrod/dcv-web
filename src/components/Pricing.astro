@@ -1,9 +1,6 @@
 ---
-import CheckoutButton from './CheckoutButton.astro';
-
 interface Props {
   proPrice?: string;    // Default: "[PRICE]"
-  checkoutUrl: string;  // Lemon Squeezy checkout URL, e.g. https://store.example.com/checkout/buy/{variant-id}
 }
 
 interface PricingTier {
@@ -14,7 +11,7 @@ interface PricingTier {
   ctaHref: string;
 }
 
-const { proPrice = "[PRICE]", checkoutUrl } = Astro.props;
+const { proPrice = "[PRICE]" } = Astro.props;
 
 const tiers: PricingTier[] = [
   {
@@ -38,7 +35,7 @@ const tiers: PricingTier[] = [
       "All minor updates & patches for v1.x.x"
     ],
     ctaLabel: "Buy Pro",
-    ctaHref: checkoutUrl,
+    ctaHref: "",
   },
 ];
 ---
@@ -49,7 +46,19 @@ const tiers: PricingTier[] = [
     {tiers.map((tier) => (
       <div class={`rounded-lg p-8 min-w-0 overflow-hidden flex flex-col ${tier.name === "Pro" ? "bg-slate-800 border border-dcv-accent/50" : "bg-slate-800 border border-slate-700"}`}>
         <h3 class="text-xl font-bold text-slate-100 mb-2">{tier.name}</h3>
-        <p class="text-3xl font-bold text-dcv-accent mb-6">{tier.price}</p>
+        {tier.name === "Pro" ? (
+          <div class="mb-6">
+            <div class="flex items-baseline gap-2.5 mb-2">
+              <p class="text-3xl font-bold text-dcv-accent">{tier.price}</p>
+              <span class="text-xs text-slate-500 line-through">after beta</span>
+            </div>
+            <span class="bg-dcv-accent/10 text-dcv-accent text-xs px-2.5 py-1 rounded font-medium">
+              Unavailable During Beta
+            </span>
+          </div>
+        ) : (
+          <p class="text-3xl font-bold text-dcv-accent mb-6">{tier.price}</p>
+        )}
         <ul class="space-y-2 mb-6 flex-1">
           {tier.features.map((feature) => (
             <li class="flex items-start gap-2 text-slate-300 text-sm">
@@ -68,7 +77,13 @@ const tiers: PricingTier[] = [
             {tier.ctaLabel}
           </a>
         ) : (
-          <CheckoutButton checkoutUrl={tier.ctaHref} label={tier.ctaLabel} />
+          <button
+            disabled
+            aria-disabled="true"
+            class="block w-full text-center bg-slate-700 text-slate-500 font-semibold py-3 px-6 rounded-md cursor-not-allowed border border-slate-600"
+          >
+            Available After Beta
+          </button>
         )}
       </div>
     ))}
