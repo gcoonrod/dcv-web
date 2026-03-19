@@ -1,0 +1,178 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contact Support — dcv" description="Get help with dcv. Report bugs, request features, or ask a question.">
+  <section class="py-16 px-6">
+    <div class="max-w-lg mx-auto">
+      <h1 class="text-3xl font-bold text-slate-100 mb-2 text-center">Contact Support</h1>
+      <p class="text-slate-400 text-sm text-center mb-8">
+        Have a question, bug report, or feature request? We'd love to hear from you.
+      </p>
+
+      <div class="bg-slate-800 rounded-xl p-8">
+        <form
+          id="support-form"
+          action="mailto:support@microcode.io"
+          method="POST"
+          enctype="text/plain"
+        >
+          <div class="space-y-5">
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-slate-300 text-sm mb-1.5">
+                Email <span class="text-red-400">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder="you@example.com"
+                aria-label="Email address"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              />
+            </div>
+
+            <!-- Name -->
+            <div>
+              <label for="name" class="block text-slate-300 text-sm mb-1.5">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                autocomplete="name"
+                placeholder="Jane Doe"
+                aria-label="Your name"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              />
+            </div>
+
+            <!-- Category -->
+            <div>
+              <label for="category" class="block text-slate-300 text-sm mb-1.5">
+                Category <span class="text-red-400">*</span>
+              </label>
+              <select
+                id="category"
+                name="category"
+                required
+                aria-label="Support category"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              >
+                <option value="" disabled selected>Select a category</option>
+                <option value="bug">Bug Report</option>
+                <option value="feature">Feature Request</option>
+                <option value="question">General Question</option>
+              </select>
+            </div>
+
+            <!-- Message -->
+            <div>
+              <label for="message" class="block text-slate-300 text-sm mb-1.5">
+                Message <span class="text-red-400">*</span>
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows="5"
+                maxlength="5000"
+                placeholder="Describe your issue or question..."
+                aria-label="Your message"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors resize-y"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Error message -->
+          <div id="form-error" class="hidden mt-4 p-3 bg-red-900/30 border border-red-700 rounded-md text-red-300 text-sm" role="alert">
+          </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            id="submit-btn"
+            aria-label="Send support message"
+            class="mt-6 w-full bg-dcv-accent text-dcv-bg font-semibold py-3 px-6 rounded-md hover:bg-dcv-accent/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Send Message
+          </button>
+        </form>
+
+        <!-- Success message (hidden by default) -->
+        <div id="form-success" class="hidden text-center py-8">
+          <div class="text-dcv-accent text-4xl mb-4" aria-hidden="true">&#10003;</div>
+          <h2 class="text-xl font-semibold text-slate-100 mb-2">Thanks — we'll get back to you</h2>
+          <p class="text-slate-400 text-sm">
+            We've received your message and will respond as soon as possible.
+          </p>
+          <a
+            href={import.meta.env.BASE_URL}
+            class="inline-block mt-6 text-dcv-accent text-sm hover:underline"
+          >
+            &larr; Back to home
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var form = document.getElementById('support-form');
+      var submitBtn = document.getElementById('submit-btn');
+      var errorEl = document.getElementById('form-error');
+      var successEl = document.getElementById('form-success');
+
+      if (!form || !submitBtn || !errorEl || !successEl) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Gather values
+        var email = document.getElementById('email').value.trim();
+        var name = document.getElementById('name').value.trim();
+        var category = document.getElementById('category').value;
+        var message = document.getElementById('message').value.trim();
+
+        // Hide previous error
+        errorEl.classList.add('hidden');
+        errorEl.textContent = '';
+
+        // Disable button, show loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+
+        fetch('https://api.microcode.io/dcv/support', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            name: name || undefined,
+            category: category,
+            message: message,
+          }),
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              return res.json().catch(function () { return {}; }).then(function (data) {
+                throw new Error(data.error || 'Something went wrong. Please try again.');
+              });
+            }
+            form.classList.add('hidden');
+            successEl.classList.remove('hidden');
+          })
+          .catch(function (err) {
+            errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+            errorEl.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+          });
+      });
+    })();
+  </script>
+</Layout>
