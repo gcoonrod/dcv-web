@@ -3,27 +3,16 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-  title="Purchase Successful — DCV"
-  description="Your DCV Pro license purchase was successful. Activate your license key to get started."
+  title="Open Beta — DCV"
+  description="dcv is currently in open beta. Pro license purchases are not yet available."
 >
-  <section aria-label="Purchase confirmation" class="py-16 px-6 max-w-2xl mx-auto">
+  <section aria-label="Beta notice" class="py-16 px-6 max-w-2xl mx-auto">
     <div class="text-center mb-10">
-      <span class="text-dcv-accent text-4xl" aria-hidden="true">✓</span>
-      <h1 class="text-3xl font-bold text-slate-100 mt-4">Thank you for your purchase!</h1>
+      <span class="text-dcv-accent text-4xl" aria-hidden="true">&#x1f6a7;</span>
+      <h1 class="text-3xl font-bold text-slate-100 mt-4">dcv is in Open Beta</h1>
       <p class="text-slate-400 mt-3 text-base">
-        Your DCV Pro license key has been sent to your email address. Check your inbox — it should
-        arrive within a few minutes.
-      </p>
-    </div>
-
-    <div class="bg-slate-800 border border-slate-700 rounded-lg p-8">
-      <h2 class="text-lg font-semibold text-slate-100 mb-4">Activate your license</h2>
-      <p class="text-slate-300 text-sm mb-4">
-        Once you receive your license key by email, run the following command to activate DCV Pro:
-      </p>
-      <pre class="bg-slate-900 border border-slate-700 rounded-md p-4 overflow-x-auto"><code class="font-mono text-dcv-accent text-sm">dcv activate &lt;your-license-key&gt;</code></pre>
-      <p class="text-slate-500 text-xs mt-3">
-        Replace <code class="font-mono text-slate-400">&lt;your-license-key&gt;</code> with the key from your purchase email.
+        Pro license purchases are not yet available. During the open beta, the Free tier is
+        fully available — no account required, no data leaves your machine.
       </p>
     </div>
 
@@ -32,7 +21,7 @@ import Layout from '../layouts/Layout.astro';
         href={`${import.meta.env.BASE_URL}/docs/installation`}
         class="text-center text-dcv-accent underline underline-offset-4 hover:text-cyan-300 transition-colors"
       >
-        View installation docs
+        Install dcv
       </a>
       <span class="hidden sm:inline text-slate-700" aria-hidden="true">·</span>
       <a
