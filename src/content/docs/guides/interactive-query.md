@@ -36,7 +36,7 @@ What gets indexed:
 
 - Commit messages and metadata
 - Pull request titles, descriptions, and review comments
-- Trello/Jira card titles and descriptions
+- Trello card titles and descriptions
 - Curation notes you added during `dcv curate`
 
 Re-run `dcv index` after fetching new data to keep the index current.

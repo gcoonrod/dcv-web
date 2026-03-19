@@ -50,7 +50,7 @@ LaTeX export is ideal when you need precise typographic control or when your org
 
 ## Output Locations
 
-By default, `dcv analyze` writes reports to `./dcv-report.md` in your current working directory. You can override this with the `-o` flag:
+By default, `dcv analyze` writes reports to `~/.local/share/dcv/reports/`. You can override this with the `-o` flag:
 
 ```bash
 dcv analyze --since 2026-01-01 --until 2026-03-31 -o ~/Desktop/q1_review.md
@@ -58,4 +58,4 @@ dcv analyze --since 2026-01-01 --until 2026-03-31 -o ~/Desktop/q1_review.md
 
 Exports always write to the path specified by `--output`. There is no default export path — you must provide one.
 
-If you save reports to `~/.dcv/reports/`, they are organized alongside your dcv configuration for easy retrieval later.
+If you save reports to `~/.local/share/dcv/reports/`, they are organized in the standard XDG data directory for easy retrieval later.

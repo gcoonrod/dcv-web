@@ -52,7 +52,7 @@ dcv analyze --since 2026-03-01 --until 2026-03-15 -o ~/review.md
 
 This sends your artifacts and curation notes to your configured AI provider for synthesis. The Anthropic provider must be set up in your configuration. See the [Anthropic provider setup guide](/dcv/docs/providers/anthropic) for details.
 
-The `-o` flag specifies the output file path. If omitted, the report is written to `./dcv-report.md`.
+The `-o` flag specifies the output file path. If omitted, the report is written to `~/.local/share/dcv/reports/`.
 
 ## Reading Your Report
 

@@ -83,6 +83,6 @@ Your report is written to the path specified by `-o`. The default output path is
 Your first report is ready. From here you can:
 
 - **Compare reports**: `dcv compare <baseline> <current>` — show your growth trajectory over time. See the [Curating & Analyzing guide](/dcv/docs/guides/curating-and-analyzing).
-- **Ask questions**: `dcv query "What were my biggest accomplishments?"` — RAG-powered Q&A over your data. See the [Interactive Query guide](/dcv/docs/guides/interactive-query) (Pro feature).
+- **Ask questions**: `dcv query "What were my biggest accomplishments?"` — RAG-powered Q&A over your data. See the [Interactive Query guide](/dcv/docs/guides/interactive-query) (Pro feature — not available during Open Beta).
 - **Export to HTML or LaTeX**: `dcv export --format html` — share polished reports. See the [Exporting & Sharing guide](/dcv/docs/guides/exporting-and-sharing).
 - **Separate work and personal projects**: See the [Context Categorization guide](/dcv/docs/categorization) to generate work-only or personal-only reports

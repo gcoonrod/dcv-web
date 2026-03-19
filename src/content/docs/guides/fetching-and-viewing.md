@@ -89,7 +89,7 @@ Use this to confirm your data looks correct before running curation or analysis.
 
 ## Troubleshooting
 
-**No pull requests found** — Verify the username in your GitHub source configuration matches the account that authored the PRs. GitHub searches by author, so a mismatched username returns zero results.
+**No pull requests found** — Verify the username in your GitHub source configuration matches the account that authored the PRs. dcv filters pull requests client-side by matching the `user.login` field, so a mismatched username returns zero results.
 
 **Authentication error** — Your API token may have expired or been revoked. Re-run `dcv init` to update the token, or edit `~/.dcv/config.json` directly. See the relevant source guide for token requirements.
 
