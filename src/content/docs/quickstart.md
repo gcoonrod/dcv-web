@@ -42,6 +42,8 @@ To fetch a single item by URL instead:
 dcv fetch --url https://github.com/org/repo/pull/123
 ```
 
+> For more on fetching strategies and troubleshooting, see the [Fetching & Viewing guide](/dcv/docs/guides/fetching-and-viewing).
+
 ## Step 3: Curate
 
 Review fetched artifacts and add personal context notes before generating your report:
@@ -51,6 +53,8 @@ dcv curate --since 2026-01-01 --until 2026-03-31
 ```
 
 This opens an interactive interface where you can annotate key PRs, commits, and tickets. Notes added here are included in the analysis and improve report quality.
+
+> Learn more about curation and workstreams in the [Curating & Analyzing guide](/dcv/docs/guides/curating-and-analyzing).
 
 ## Step 4: View
 
@@ -72,10 +76,13 @@ dcv analyze --since 2026-01-01 --until 2026-03-31 -o ~/Desktop/q1_review.md
 
 Your report is written to the path specified by `-o`. The default output path is `./dcv-report.md`.
 
+> See the [Curating & Analyzing guide](/dcv/docs/guides/curating-and-analyzing) for tips on reading and comparing reports.
+
 ## Next Steps
 
 Your first report is ready. From here you can:
 
-- **Compare reports**: `dcv compare <baseline> <current>` — show your growth trajectory over time
-- **Ask questions**: `dcv query "What were my biggest accomplishments?"` — RAG-powered Q&A over your data (requires Voyage AI — see the [Configuration guide](/dcv/docs/configuration))
+- **Compare reports**: `dcv compare <baseline> <current>` — show your growth trajectory over time. See the [Curating & Analyzing guide](/dcv/docs/guides/curating-and-analyzing).
+- **Ask questions**: `dcv query "What were my biggest accomplishments?"` — RAG-powered Q&A over your data. See the [Interactive Query guide](/dcv/docs/guides/interactive-query) (Pro feature — not available during Open Beta).
+- **Export to HTML or LaTeX**: `dcv export --format html` — share polished reports. See the [Exporting & Sharing guide](/dcv/docs/guides/exporting-and-sharing).
 - **Separate work and personal projects**: See the [Context Categorization guide](/dcv/docs/categorization) to generate work-only or personal-only reports

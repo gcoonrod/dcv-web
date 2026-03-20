@@ -1,29 +1,33 @@
 ---
-import CheckoutButton from './CheckoutButton.astro';
-
 interface Props {
   proPrice?: string;    // Default: "[PRICE]"
-  checkoutUrl: string;  // Lemon Squeezy checkout URL, e.g. https://store.example.com/checkout/buy/{variant-id}
+}
+
+interface PricingFeature {
+  text: string;
+  annotation?: string;
 }
 
 interface PricingTier {
   name: string;
   price: string;
-  features: string[];
+  features: PricingFeature[];
   ctaLabel: string;
-  ctaHref: string;
+  ctaHref?: string;
 }
 
-const { proPrice = "[PRICE]", checkoutUrl } = Astro.props;
+const { proPrice = "[PRICE]" } = Astro.props;
 
 const tiers: PricingTier[] = [
   {
     name: "Free",
     price: "Free",
     features: [
-      "Local Git repositories",
-      "Public GitHub repositories",
-      "Markdown report generation"
+      { text: "GitHub repositories (public & private)" },
+      { text: "Trello boards" },
+      { text: "Local Git repositories" },
+      { text: "AI-powered analysis & comparison (Anthropic)" },
+      { text: "Markdown, HTML & LaTeX export" },
     ],
     ctaLabel: "Install Free",
     ctaHref: `${import.meta.env.BASE_URL}/docs/installation`,
@@ -32,13 +36,12 @@ const tiers: PricingTier[] = [
     name: "Pro",
     price: proPrice,
     features: [
-      "Jira, Linear, GH Enterprise, GitLab fetchers",
-      "HTML & LaTeX export formats",
-      "dcv query — Interactive RAG",
-      "All minor updates & patches for v1.x.x"
+      { text: "dcv query — Interactive RAG" },
+      { text: "Journal — ad-hoc work logging", annotation: "coming Phase 2" },
+      { text: "Enterprise sources: Jira, Linear, GitLab, Azure DevOps", annotation: "planned" },
+      { text: "All minor updates & patches for v1.x.x" },
     ],
     ctaLabel: "Buy Pro",
-    ctaHref: checkoutUrl,
   },
 ];
 ---
@@ -49,12 +52,29 @@ const tiers: PricingTier[] = [
     {tiers.map((tier) => (
       <div class={`rounded-lg p-8 min-w-0 overflow-hidden flex flex-col ${tier.name === "Pro" ? "bg-slate-800 border border-dcv-accent/50" : "bg-slate-800 border border-slate-700"}`}>
         <h3 class="text-xl font-bold text-slate-100 mb-2">{tier.name}</h3>
-        <p class="text-3xl font-bold text-dcv-accent mb-6">{tier.price}</p>
+        {tier.name === "Pro" ? (
+          <div class="mb-6">
+            <div class="flex items-baseline gap-2.5 mb-2">
+              <p class="text-3xl font-bold text-dcv-accent">{tier.price}</p>
+              <span class="text-xs text-slate-500 line-through">after beta</span>
+            </div>
+            <span class="bg-dcv-accent/10 text-dcv-accent text-xs px-2.5 py-1 rounded font-medium">
+              Unavailable During Beta
+            </span>
+          </div>
+        ) : (
+          <p class="text-3xl font-bold text-dcv-accent mb-6">{tier.price}</p>
+        )}
         <ul class="space-y-2 mb-6 flex-1">
           {tier.features.map((feature) => (
             <li class="flex items-start gap-2 text-slate-300 text-sm">
               <span class="text-dcv-accent mt-0.5 shrink-0" aria-hidden="true">✓</span>
-              {feature}
+              <span>
+                {feature.text}
+                {feature.annotation && (
+                  <span class="text-slate-500 text-xs"> ({feature.annotation})</span>
+                )}
+              </span>
             </li>
           ))}
         </ul>
@@ -68,9 +88,117 @@ const tiers: PricingTier[] = [
             {tier.ctaLabel}
           </a>
         ) : (
-          <CheckoutButton checkoutUrl={tier.ctaHref} label={tier.ctaLabel} />
+          <button
+            type="button"
+            disabled
+            aria-disabled="true"
+            class="block w-full text-center bg-slate-700 text-slate-500 font-semibold py-3 px-6 rounded-md cursor-not-allowed border border-slate-600"
+          >
+            Available After Beta
+          </button>
+        )}
+        {tier.name === "Pro" && (
+          <div class="border-t border-slate-700 pt-4 mt-5">
+            <form id="notify-form" action="mailto:support@microcode.io?subject=Pro%20Launch%20Notification" method="POST" enctype="text/plain" class="space-y-3">
+              <p class="text-slate-300 text-sm font-medium">Get notified when Pro launches</p>
+              <input
+                type="text"
+                name="name"
+                autocomplete="name"
+                placeholder="Name (optional)"
+                aria-label="Your name"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              />
+              <input
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder="Email address"
+                aria-label="Email address"
+                class="w-full bg-dcv-bg border border-slate-700 rounded-md px-3 py-2 text-slate-200 text-sm placeholder-slate-500 focus:border-dcv-accent focus:ring-1 focus:ring-dcv-accent focus:outline-none transition-colors"
+              />
+              <button
+                type="submit"
+                id="notify-btn"
+                class="w-full bg-dcv-accent text-dcv-bg font-semibold text-sm py-2.5 px-4 rounded-md hover:bg-dcv-accent/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Notify Me
+              </button>
+              <p class="text-slate-500 text-xs text-center">No spam. Unsubscribe anytime.</p>
+            </form>
+            <div id="notify-success" class="hidden text-center py-3" role="status" aria-live="polite">
+              <p class="text-dcv-accent text-sm font-medium" tabindex="-1" id="notify-success-msg">You're on the list!</p>
+              <p class="text-slate-500 text-xs mt-1">We'll email you when Pro is available.</p>
+            </div>
+            <noscript>
+              <a href="mailto:support@microcode.io?subject=Pro%20Launch%20Notification" class="text-dcv-accent text-xs underline">
+                Email us to get notified
+              </a>
+            </noscript>
+          </div>
         )}
       </div>
     ))}
   </div>
 </section>
+
+<script is:inline>
+(function () {
+  var form = document.getElementById('notify-form');
+  var btn = document.getElementById('notify-btn');
+  var successEl = document.getElementById('notify-success');
+  var successMsg = document.getElementById('notify-success-msg');
+
+  if (!form || !btn || !successEl) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var email = form.querySelector('[name="email"]').value.trim();
+    var name = form.querySelector('[name="name"]').value.trim();
+
+    var existingErrorEl = document.getElementById('notify-error');
+    if (existingErrorEl) existingErrorEl.remove();
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    fetch('https://api.microcode.io/dcv/subscribers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, name: name || undefined }),
+    })
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            throw new Error(data.error || 'Something went wrong. Please try again.');
+          });
+        }
+        form.classList.add('hidden');
+        successEl.classList.remove('hidden');
+        if (successMsg) successMsg.focus();
+      })
+      .catch(function (err) {
+        var errorEl = document.getElementById('notify-error');
+        if (errorEl) errorEl.remove();
+        errorEl = document.createElement('div');
+        errorEl.id = 'notify-error';
+        errorEl.className = 'text-xs mt-2';
+        errorEl.setAttribute('role', 'alert');
+        var msgP = document.createElement('p');
+        msgP.className = 'text-red-400';
+        msgP.textContent = err.message || 'Something went wrong.';
+        var fallbackLink = document.createElement('a');
+        fallbackLink.href = 'mailto:support@microcode.io?subject=Pro%20Launch%20Notification&body=Email:%20' + encodeURIComponent(email);
+        fallbackLink.className = 'text-dcv-accent underline';
+        fallbackLink.textContent = 'Email us instead';
+        errorEl.appendChild(msgP);
+        errorEl.appendChild(fallbackLink);
+        form.appendChild(errorEl);
+        btn.disabled = false;
+        btn.textContent = 'Notify Me';
+      });
+  });
+})();
+</script>

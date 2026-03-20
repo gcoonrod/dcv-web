@@ -35,12 +35,20 @@ const {
     />
   </head>
   <body class="bg-dcv-bg text-slate-200 font-sans antialiased min-h-screen">
+    <div class="bg-dcv-accent/10 border-b border-dcv-accent/20 px-6 py-2 text-center">
+      <p class="text-dcv-accent text-sm">
+        dcv is in <strong>Open Beta</strong> — try it free today, Pro features coming soon
+      </p>
+    </div>
     <header class="border-b border-slate-800 px-6 py-4">
       <nav class="max-w-5xl mx-auto flex items-center justify-between">
         <a href={import.meta.env.BASE_URL} class="text-slate-100 font-semibold text-sm">dcv</a>
         <div class="flex items-center gap-6">
           <a href={`${import.meta.env.BASE_URL}/docs/installation`} class="text-slate-400 hover:text-slate-200 transition-colors text-sm">
             Docs
+          </a>
+          <a href={`${import.meta.env.BASE_URL}/support`} class="text-slate-400 hover:text-slate-200 transition-colors text-sm">
+            Support
           </a>
         </div>
       </nav>
