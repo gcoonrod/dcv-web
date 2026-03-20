@@ -103,7 +103,7 @@ Developer CV stores all data and configuration in the `~/.dcv` directory:
 |-----------|---------|---|---|
 | `config.json` | API tokens, data sources, LLM providers | Yes (on `dcv init`) | Yes, via `dcv init` or manual editing |
 | `data.db` | SQLite database: PRs, commits, cards, notes, embeddings | Yes (on first `dcv fetch`) | No (managed by dcv) |
-| `data.db` | SQLite database: PRs, commits, cards, notes, embeddings | Yes (on first `dcv fetch`) | No (managed by dcv) |
+| `data.db-shm` / `data.db-wal` | SQLite write-ahead log and shared-memory files for `data.db` | Yes (created by SQLite when needed) | No (managed by SQLite/dcv) |
 | `templates/` | Handlebars `.hbs` templates for AI prompts | Yes (on `dcv init`) | Yes, edit files in place |
 | `context/` | Optional Markdown files for personalization | No | Yes, create job_description.md & career_goals.md by copying from examples/ |
 | `examples/` | Reference boilerplate for context files (job_description, career_goals) | Yes (on `dcv init`) | No (reference only; copy to context/ and edit) |
@@ -285,7 +285,7 @@ This file describes **where you're heading**, not where you are. It should inclu
 # Career Goals
 
 ## Short-Term Goals (6–12 months)
-- Acheive a release cadence of twice a month
+- Achieve a release cadence of twice a month
 - Lead infrastructure-as-code migration with senior architects
 - Demonstrate technical and inter-personal leadership growth
 
@@ -391,7 +391,7 @@ Categories are applied at multiple levels:
 
 Omitting `--category` on `analyze` or `query` includes **all** categories.
 
-See the [Context Categorization guide](/dcv/docs/categorization) for a step-by-step walkthrough.
+See the [Context Categorization guide](#category-system) for a step-by-step walkthrough.
 
 ## Secret Management
 
