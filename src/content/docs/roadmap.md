@@ -31,17 +31,10 @@ Feature availability and what's coming next for dcv.
 - **`export`** — output reports in Markdown, HTML, or LaTeX.
 - **`index`** — build vector search index of your work history.
 
-### Install
+## 🔜 Coming Soon (Pro License)
 
-- **`curl` installer** — one-line install with Ed25519 signature verification (macOS, Linux).
-
-## 🔜 Coming Soon (Pro)
-
-- **Interactive RAG Query (`dcv query`)** — natural language search over your work history using vector embeddings. Requires Pro license.
 - **Pro license activation** — `dcv license set` will be enabled for Pro license holders.
-
-## 🔧 Coming in Phase 2
-
+- **Interactive RAG Query (`dcv query`)** — natural language search over your work history using vector embeddings. Requires Pro license.
 - **Journal** — ad-hoc work logging for activities not captured by commits or tickets (glue work, mentoring, architecture discussions). Will require Pro license.
 
 ## 🧭 Planned
@@ -49,4 +42,3 @@ Feature availability and what's coming next for dcv.
 - **Enterprise sources:** Jira, Linear, GitLab, Azure DevOps.
 - **Additional LLM providers:** OpenAI, Gemini.
 - **Additional embedding providers:** OpenAI embeddings.
-- **Platform:** Windows binary.
