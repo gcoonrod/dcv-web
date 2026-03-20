@@ -1,6 +1,6 @@
 ---
 title: "Installation"
-description: "Install the dcv binary on macOS, Linux, or Windows."
+description: "Install the dcv binary on macOS or Linux."
 order: 1
 ---
 
@@ -19,7 +19,8 @@ curl -fsSL https://apps.microcode.io/dcv/install.sh | sh
 Download the latest binary for your platform using:
 
 ```bash
-curl -fsSL https://apps.microcode.io/dcv/releases/latest/BINARY_NAME -o dcv
+# Replace BINARY_NAME with the value from the table below
+curl -fsSL https://apps.microcode.io/dcv/releases/latest/BINARY_NAME -o BINARY_NAME
 ```
 
 Replace `BINARY_NAME` with the appropriate binary for your platform:
@@ -37,7 +38,7 @@ Verify the binary checksum:
 # Download the checksum file
 curl -fsSL https://apps.microcode.io/dcv/releases/latest/SHA256SUMS -o SHA256SUMS
 
-# Verify your downloaded binary
+# Verify your downloaded binary (filename must match the entry in SHA256SUMS)
 sha256sum -c SHA256SUMS          # Linux
 # or on macOS:
 shasum -a 256 -c SHA256SUMS
@@ -46,7 +47,11 @@ shasum -a 256 -c SHA256SUMS
 Copy the binary into your PATH:
 
 ```bash
-chmod +x dcv && mv dcv /usr/local/bin/dcv
+# Rename and move — use sudo if /usr/local/bin requires elevated privileges,
+# or install to a user-writable directory such as ~/.local/bin
+chmod +x BINARY_NAME && sudo mv BINARY_NAME /usr/local/bin/dcv
+# Alternatively (no sudo required):
+# chmod +x BINARY_NAME && mkdir -p ~/.local/bin && mv BINARY_NAME ~/.local/bin/dcv
 ```
 
 Verify the install:
