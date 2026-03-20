@@ -74,7 +74,7 @@ Generate your performance review report:
 dcv analyze --since 2026-01-01 --until 2026-03-31 -o ~/Desktop/q1_review.md
 ```
 
-Your report is written to the path specified by `-o`. The default output path is `./dcv-report.md`.
+Your report is written to the path specified by `-o`. The default output path is `~/.dcv/reports/`.
 
 > See the [Curating & Analyzing guide](/dcv/docs/guides/curating-and-analyzing) for tips on reading and comparing reports.
 
