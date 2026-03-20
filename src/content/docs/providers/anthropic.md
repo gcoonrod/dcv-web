@@ -10,7 +10,7 @@ order: 20
 
 ## Configuration
 
-Add an Anthropic provider entry to the `providers` array in your `~/.config/dcv/config.json`:
+Add an Anthropic provider entry to the `providers` array in your `~/.dcv/config.json`:
 
 ```json
 {
@@ -18,7 +18,7 @@ Add an Anthropic provider entry to the `providers` array in your `~/.config/dcv/
   "type": "anthropic",
   "role": "analysis",
   "apiKey": "sk-ant-xxxxxxxxxxxx",
-  "model": "claude-3-5-sonnet-latest",
+  "model": "claude-sonnet-4-6",
   "default": true,
   "status": "active"
 }
@@ -32,7 +32,7 @@ Add an Anthropic provider entry to the `providers` array in your `~/.config/dcv/
 | `type` | Yes | Must be `"anthropic"`. |
 | `role` | Yes | Must be `"analysis"`. Anthropic models are used for generating contribution reports. |
 | `apiKey` | Yes | Anthropic API key. Can also be set via the `DCV_ANTHROPIC_API_KEY` environment variable. |
-| `model` | No | Model to use. Default: `claude-3-5-sonnet-latest`. |
+| `model` | No | Model to use. Default: `claude-sonnet-4-6`. |
 | `default` | No | Set to `true` to make this the default analysis provider. |
 | `status` | Yes | `"active"` or `"inactive"`. Inactive providers are skipped. |
 
@@ -48,14 +48,13 @@ You should see output similar to:
 
 ```
 Analyzing contributions...
-  Using provider: anthropic (claude-3-5-sonnet-latest)
+  Using provider: anthropic (claude-sonnet-4-6)
   Processing 59 items...
-Report generated: ~/.local/share/dcv/reports/2026-03-01_2026-03-15.md
+Report generated: ~/.dcv/reports/2026-03-01_2026-03-15.md
 ```
 
 ## Tips
 
-- **Model selection** -- `claude-3-5-sonnet-latest` offers the best balance of quality and speed for contribution analysis. You can also use `claude-3-5-haiku-latest` for faster, lower-cost runs.
-- **Token budgets** -- The model has a 200K context window. For most contributors, two weeks of data fits within a single context. dcv uses map-reduce for larger datasets that exceed the context window.
-- **Map-reduce for large datasets** -- When contribution data exceeds the context window, dcv automatically splits the data into chunks, analyzes each chunk independently, then synthesizes the results into a single report.
-- **Cost management** -- Each analysis run consumes API credits. Use `--since` and `--until` to limit the date range and reduce token usage.
+- **Model selection** -- `claude-sonnet-4-6` offers the best balance of quality and speed for contribution analysis. You can also use `claude-haiku-4-5` for faster, lower-cost runs.
+- **Large datasets** -- The model has a 200K context window. For most contributors, two weeks of data fits within a single context. When contribution data exceeds the context window, dcv automatically splits the data into chunks, analyzes each chunk independently, then synthesizes the results into a single report.
+- **Cost optimization** -- Each analysis run consumes API credits. Use `--since` and `--until` to limit the date range and reduce token usage.

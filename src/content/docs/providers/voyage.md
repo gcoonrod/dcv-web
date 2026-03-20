@@ -46,7 +46,7 @@ dcv index
 
 You should see output similar to:
 
-```
+```text
 Indexing contributions...
   Using provider: voyage (voyage-3.5-lite)
   Embedding 59 items...
@@ -55,7 +55,6 @@ Done. Index updated.
 
 ## Tips
 
-- **When to re-index** -- Run `dcv index` after each `dcv fetch` to keep your embeddings up to date with newly fetched contributions.
 - **RAG query** -- Embeddings power the semantic search used by the RAG query feature (Pro). After indexing, you can query your contributions using natural language.
 - **Rate limits** -- Voyage AI applies rate limits per API key. dcv retries failed requests with exponential backoff automatically.
 - **Dimensions** -- The default `voyage-3.5-lite` model produces 1024-dimensional vectors, providing a good balance of accuracy and storage efficiency.
